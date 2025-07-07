@@ -1,0 +1,70 @@
+{% extends 'Market/base.html' %}
+{% load static %}
+
+{% block title %}Про нас - Мій магазин{% endblock %}
+
+{% block content %}
+<section class="about-section">
+    <h2 class="section-title">Про наш магазин</h2>
+    <div class="about-content">
+        <div class="about-text">
+            <p>Ласкаво просимо до нашого інтернет-магазину! Ми - команда професіоналів, яка вже більше 10 років працює в сфері роздрібної торгівлі.</p>
+
+            <h3>Наша місія</h3>
+            <p>Надавати якісні товари за доступними цінами і забезпечувати найкращий сервіс для наших клієнтів.</p>
+
+            <h3>Наші переваги</h3>
+            <ul class="advantages-list">
+                <li>Широкий асортимент товарів</li>
+                <li>Конкурентні ціни</li>
+                <li>Швидка доставка</li>
+                <li>Професійна підтримка клієнтів</li>
+                <li>Гарантія якості</li>
+            </ul>
+
+            <h3>Чому обирають нас?</h3>
+            <p>Ми завжди прагнемо до вдосконалення і постійно розширюємо наш асортимент, щоб задовольнити потреби кожного клієнта.</p>
+        </div>
+
+        <div class="about-stats">
+            <div class="stat-item">
+                <h4>10+</h4>
+                <p>Років досвіду</p>
+            </div>
+            <div class="stat-item">
+                <h4>1000+</h4>
+                <p>Задоволених клієнтів</p>
+            </div>
+            <div class="stat-item">
+                <h4>500+</h4>
+                <p>Товарів в асортименті</p>
+            </div>
+            <div class="stat-item">
+                <h4>24/7</h4>
+                <p>Підтримка клієнтів</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="team-section">
+    <h2 class="section-title">Наша команда</h2>
+    <div class="team-grid">
+        <div class="team-member">
+            <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="Керівник">
+            <h4>Олександр Петренко</h4>
+            <p>Керівник магазину</p>
+        </div>
+        <div class="team-member">
+            <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="Менеджер">
+            <h4>Марія Іваненко</h4>
+            <p>Менеджер з продажів</p>
+        </div>
+        <div class="team-member">
+            <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="Підтримка">
+            <h4>Сергій Коваленко</h4>
+            <p>Служба підтримки</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

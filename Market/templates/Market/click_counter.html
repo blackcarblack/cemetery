@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Счётчик нажатий</title>
+</head>
+<body>
+    <h1>Кнопка нажата {{ count }} раз.</h1>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Нажми меня</button>
+    </form>
+</body>
+</html>

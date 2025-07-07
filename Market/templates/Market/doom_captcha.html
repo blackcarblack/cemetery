@@ -1,0 +1,648 @@
+
+<style>
+    @font-face {
+        font-family: 'DOOMFont';
+        src: url('data:font/truetype;charset=utf-8;base64,') format('truetype');
+    }
+    
+    #doom-captcha-container {
+        width: 800px;
+        height: 600px;
+        background: #000;
+        position: relative;
+        overflow: hidden;
+        margin: 20px auto;
+        border: 4px solid #444;
+        image-rendering: pixelated;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: crisp-edges;
+        font-family: 'Courier New', monospace;
+        box-shadow: inset 0 0 50px rgba(255,0,0,0.3);
+    }
+    
+    #doom-viewport {
+        width: 100%;
+        height: 480px;
+        background: 
+            radial-gradient(ellipse at 50% 100%, #330000 0%, #000000 50%),
+            linear-gradient(180deg, #2C1810 0%, #2C1810 40%, #5A4A3A 40%, #5A4A3A 100%);
+        position: relative;
+        cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="16" cy="16" r="10" fill="none" stroke="red" stroke-width="2"/><line x1="16" y1="6" x2="16" y2="26" stroke="red" stroke-width="2"/><line x1="6" y1="16" x2="26" y2="16" stroke="red" stroke-width="2"/></svg>') 16 16, crosshair;
+    }
+    
+    .doom-wall {
+        position: absolute;
+        background: 
+            repeating-linear-gradient(
+                0deg,
+                #8B4513 0px, #8B4513 8px,
+                #654321 8px, #654321 16px,
+                #8B4513 16px, #8B4513 24px,
+                #A0522D 24px, #A0522D 32px
+            );
+        box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3), inset -2px -2px 4px rgba(0,0,0,0.7);
+        border: 1px solid #222;
+    }
+    
+    .doom-imp {
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        cursor: crosshair;
+        z-index: 10;
+        image-rendering: pixelated;
+        background: 
+            radial-gradient(circle at 30% 30%, #FF6B47 0%, #FF6B47 30%, #CC2200 70%, #990000 100%);
+        border-radius: 0;
+        animation: impIdle 1.5s ease-in-out infinite;
+        transition: all 0.1s ease;
+    }
+    
+    .doom-imp::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 48px;
+        height: 48px;
+        background: 
+            conic-gradient(from 0deg, 
+                #FF0000 0deg, #FF3300 45deg, 
+                #FF6600 90deg, #FFAA00 135deg,
+                #FF6600 180deg, #FF3300 225deg,
+                #FF0000 270deg, #CC0000 315deg);
+        clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+        animation: impGlow 2s ease-in-out infinite;
+    }
+    
+    .doom-imp::after {
+        content: '👹';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 32px;
+        text-shadow: 0 0 10px #FF0000, 2px 2px 4px #000;
+        z-index: 2;
+        filter: drop-shadow(0 0 5px #FF0000);
+    }
+    
+    @keyframes impIdle {
+        0%, 100% { transform: translateY(0px) scaleX(1); }
+        25% { transform: translateY(-3px) scaleX(1.05); }
+        50% { transform: translateY(-1px) scaleX(0.95); }
+        75% { transform: translateY(-4px) scaleX(1.02); }
+    }
+    
+    @keyframes impGlow {
+        0%, 100% { opacity: 0.8; filter: brightness(1); }
+        50% { opacity: 1; filter: brightness(1.3); }
+    }
+    
+    .doom-imp:hover {
+        transform: scale(1.1);
+        filter: brightness(1.2) drop-shadow(0 0 15px #FF0000);
+        animation-duration: 0.8s;
+    }
+    
+    .doom-imp.attacking {
+        animation: impAttack 0.3s ease-out;
+    }
+    
+    @keyframes impAttack {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.3) translateY(-10px); filter: brightness(2); }
+        100% { transform: scale(1); }
+    }
+    
+    .doom-fireball {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: radial-gradient(circle, #FFFF00 0%, #FF4500 50%, #FF0000 100%);
+        border-radius: 50%;
+        z-index: 5;
+        animation: fireballFly 2s linear;
+        box-shadow: 0 0 10px #FF4500;
+    }
+    
+    @keyframes fireballFly {
+        0% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(0.3); }
+    }
+    
+    .doom-explosion {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: 
+            radial-gradient(circle, 
+                #FFFFFF 0%, #FFFF00 20%, 
+                #FF8C00 40%, #FF4500 60%, 
+                #FF0000 80%, #8B0000 100%);
+        border-radius: 50%;
+        animation: explode 0.6s ease-out forwards;
+        pointer-events: none;
+        z-index: 20;
+        box-shadow: 0 0 50px #FF4500;
+    }
+    
+    @keyframes explode {
+        0% { transform: scale(0) rotate(0deg); opacity: 1; }
+        50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+        100% { transform: scale(3) rotate(360deg); opacity: 0; }
+    }
+    
+    .doom-muzzle-flash {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        background: 
+            radial-gradient(circle, 
+                #FFFFFF 0%, #FFFF88 30%, 
+                #FFAA00 60%, transparent 100%);
+        animation: muzzleFlash 0.08s ease-out forwards;
+        pointer-events: none;
+        z-index: 15;
+        border-radius: 50%;
+    }
+    
+    @keyframes muzzleFlash {
+        0% { opacity: 1; transform: scale(0.2); }
+        100% { opacity: 0; transform: scale(2); }
+    }
+    
+    .doom-hud {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 120px;
+        background: 
+            linear-gradient(180deg, 
+                #444444 0%, #222222 50%, #000000 100%);
+        border-top: 4px solid #888;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 30px;
+        color: #00FF41;
+        font-weight: bold;
+        text-shadow: 0 0 8px #00FF41;
+        font-size: 14px;
+        box-shadow: inset 0 4px 8px rgba(0,0,0,0.5);
+    }
+    
+    .doom-face {
+        width: 80px;
+        height: 80px;
+        background: #FFDBAC;
+        border-radius: 0;
+        position: relative;
+        border: 2px solid #CD853F;
+        box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3);
+    }
+    
+    .doom-face::before {
+        content: '😠';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        filter: sepia(1) hue-rotate(25deg) saturate(1.2);
+    }
+    
+    .doom-health-bar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .doom-health-num {
+        font-size: 32px;
+        color: #FF4444;
+        text-shadow: 0 0 10px #FF4444;
+        margin-bottom: 5px;
+    }
+    
+    .doom-armor-num {
+        font-size: 32px;
+        color: #4444FF;
+        text-shadow: 0 0 10px #4444FF;
+    }
+    
+    .doom-weapons {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .doom-weapon {
+        color: #FFFF00;
+        text-shadow: 0 0 5px #FFFF00;
+        font-size: 12px;
+    }
+    
+    .doom-weapon.active {
+        color: #00FF00;
+        text-shadow: 0 0 8px #00FF00;
+        font-weight: bold;
+    }
+    
+    .doom-status-text {
+        text-align: center;
+        margin: 15px 0;
+        font-size: 20px;
+        font-weight: bold;
+        color: #FF4444;
+        text-shadow: 2px 2px 4px #000, 0 0 10px #FF4444;
+        letter-spacing: 2px;
+        animation: statusPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes statusPulse {
+        0%, 100% { opacity: 0.8; transform: scale(1); }
+        50% { opacity: 1; transform: scale(1.05); }
+    }
+    
+    .doom-status-text.completed {
+        color: #00FF41;
+        text-shadow: 2px 2px 4px #000, 0 0 15px #00FF41;
+        animation: completedFlash 1s ease-in-out infinite;
+    }
+    
+    @keyframes completedFlash {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    .doom-instructions {
+        text-align: center;
+        margin: 15px 0;
+        font-size: 16px;
+        color: #CCCCCC;
+        font-weight: bold;
+        text-shadow: 1px 1px 2px #000;
+        background: rgba(0,0,0,0.7);
+        padding: 10px;
+        border: 2px solid #444;
+        border-radius: 0;
+    }
+    
+    .blood-splatter {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background: 
+            radial-gradient(circle at 30% 30%, 
+                #CC0000 0%, #990000 50%, #660000 100%);
+        border-radius: 60% 40% 30% 70%;
+        animation: bloodSplat 0.5s ease-out forwards;
+        pointer-events: none;
+        z-index: 8;
+    }
+    
+    @keyframes bloodSplat {
+        0% { opacity: 1; transform: scale(0); }
+        50% { opacity: 1; transform: scale(1.2); }
+        100% { opacity: 0.6; transform: scale(1); }
+    }
+    
+    .screen-flash {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 0, 0, 0.3);
+        animation: damageFlash 0.2s ease-out forwards;
+        pointer-events: none;
+        z-index: 25;
+    }
+    
+    @keyframes damageFlash {
+        0% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+</style>
+
+<div class="doom-instructions">
+    ⚡ DOOM SECURITY PROTOCOL ACTIVATED ⚡<br>
+    Eliminate all Imp demons to proceed. Use your weapon to shoot them down!
+</div>
+
+<div id="doom-captcha-container">
+    <div id="doom-viewport">
+        <!-- Mars base walls -->
+        <div class="doom-wall" style="top: 60px; left: 120px; width: 100px; height: 30px;"></div>
+        <div class="doom-wall" style="top: 180px; left: 250px; width: 30px; height: 100px;"></div>
+        <div class="doom-wall" style="top: 140px; left: 400px; width: 120px; height: 30px;"></div>
+        <div class="doom-wall" style="top: 90px; left: 580px; width: 30px; height: 120px;"></div>
+        <div class="doom-wall" style="top: 320px; left: 80px; width: 150px; height: 30px;"></div>
+        <div class="doom-wall" style="top: 280px; left: 480px; width: 100px; height: 30px;"></div>
+        <div class="doom-wall" style="top: 400px; left: 300px; width: 200px; height: 30px;"></div>
+        
+        <!-- HUD -->
+        <div class="doom-hud">
+            <div class="doom-face" id="doom-face"></div>
+            <div class="doom-health-bar">
+                <div class="doom-health-num" id="health-display">100</div>
+                <div style="color: #00FF41; font-size: 12px;">HEALTH</div>
+                <div class="doom-armor-num" id="armor-display">0</div>
+                <div style="color: #4444FF; font-size: 12px;">ARMOR</div>
+            </div>
+            <div class="doom-weapons">
+                <div class="doom-weapon">1 FIST</div>
+                <div class="doom-weapon">2 PISTOL</div>
+                <div class="doom-weapon active" id="current-weapon">3 SHOTGUN</div>
+                <div class="doom-weapon">4 CHAINGUN</div>
+                <div class="doom-weapon">5 ROCKET</div>
+                <div class="doom-weapon">6 PLASMA</div>
+                <div class="doom-weapon">7 BFG9000</div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <div style="font-size: 24px; color: #FFFF00; text-shadow: 0 0 10px #FFFF00;" id="ammo-display">50</div>
+                <div style="color: #FFFF00; font-size: 12px;">SHELLS</div>
+                <div style="color: #FF4444; font-size: 16px; margin-top: 10px;">IMPS: <span id="imps-remaining">8</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="doom-status-text" id="doom-status">
+    ⚡ ELIMINATE ALL IMPS ⚡ [0/8]
+</div>
+
+<input type="hidden" id="id_captcha" name="captcha" value="">
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const viewport = document.getElementById('doom-viewport');
+        const tokenInput = document.getElementById('id_captcha');
+        const statusDiv = document.getElementById('doom-status');
+        const healthDisplay = document.getElementById('health-display');
+        const ammoDisplay = document.getElementById('ammo-display');
+        const impsRemaining = document.getElementById('imps-remaining');
+        const doomFace = document.getElementById('doom-face');
+        
+        const totalImps = 8;
+        let impsKilled = 0;
+        let playerHealth = 100;
+        let playerAmmo = 50;
+        let gameActive = true;
+        let impCount = 0;
+        
+        // Authentic DOOM imp spawn positions (avoiding walls)
+        const spawnPositions = [
+            {x: 50, y: 100}, {x: 300, y: 80}, {x: 650, y: 150},
+            {x: 150, y: 240}, {x: 550, y: 200}, {x: 100, y: 380},
+            {x: 400, y: 350}, {x: 700, y: 300}
+        ];
+        
+        function updateGameState() {
+            statusDiv.textContent = `⚡ ELIMINATE ALL IMPS ⚡ [${impsKilled}/${totalImps}]`;
+            impsRemaining.textContent = totalImps - impsKilled;
+            healthDisplay.textContent = playerHealth;
+            ammoDisplay.textContent = playerAmmo;
+            
+            // Update Doomguy face based on health
+            if (playerHealth > 75) {
+                doomFace.innerHTML = '<div style="font-size: 48px;">😠</div>';
+            } else if (playerHealth > 50) {
+                doomFace.innerHTML = '<div style="font-size: 48px;">😡</div>';
+            } else if (playerHealth > 25) {
+                doomFace.innerHTML = '<div style="font-size: 48px;">🤕</div>';
+            } else if (playerHealth > 0) {
+                doomFace.innerHTML = '<div style="font-size: 48px;">💀</div>';
+            }
+            
+            if (impsKilled >= totalImps) {
+                statusDiv.textContent = '⚡ ACCESS GRANTED - MARS BASE SECURED ⚡';
+                statusDiv.classList.add('completed');
+                tokenInput.value = 'DOOM_CAPTCHA_PASSED';
+                gameActive = false;
+                
+                // Victory screen flash
+                const victoryFlash = document.createElement('div');
+                victoryFlash.style.cssText = `
+                    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,255,0,0.3); z-index: 30; pointer-events: none;
+                    animation: victoryFlash 1s ease-out forwards;
+                `;
+                victoryFlash.innerHTML = '<style>@keyframes victoryFlash { 0% { opacity: 1; } 100% { opacity: 0; } }</style>';
+                viewport.appendChild(victoryFlash);
+                
+                setTimeout(() => victoryFlash.remove(), 1000);
+            }
+        }
+        
+        function createMuzzleFlash(x, y) {
+            const flash = document.createElement('div');
+            flash.className = 'doom-muzzle-flash';
+            flash.style.left = (x - 30) + 'px';
+            flash.style.top = (y - 30) + 'px';
+            viewport.appendChild(flash);
+            
+            setTimeout(() => flash.remove(), 80);
+        }
+        
+        function createExplosion(x, y) {
+            const explosion = document.createElement('div');
+            explosion.className = 'doom-explosion';
+            explosion.style.left = (x - 50) + 'px';
+            explosion.style.top = (y - 50) + 'px';
+            viewport.appendChild(explosion);
+            
+            setTimeout(() => explosion.remove(), 600);
+        }
+        
+        function createBloodSplatter(x, y) {
+            const blood = document.createElement('div');
+            blood.className = 'blood-splatter';
+            blood.style.left = x + 'px';
+            blood.style.top = y + 'px';
+            blood.style.transform = `rotate(${Math.random() * 360}deg)`;
+            viewport.appendChild(blood);
+            
+            setTimeout(() => blood.remove(), 2000);
+        }
+        
+        function createFireball(startX, startY, targetX, targetY) {
+            const fireball = document.createElement('div');
+            fireball.className = 'doom-fireball';
+            fireball.style.left = startX + 'px';
+            fireball.style.top = startY + 'px';
+            viewport.appendChild(fireball);
+            
+            const deltaX = targetX - startX;
+            const deltaY = targetY - startY;
+            
+            fireball.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+            
+            setTimeout(() => {
+                fireball.remove();
+                
+                // Player damage on impact
+                if (Math.random() < 0.3 && gameActive) {
+                    takeDamage(15);
+                }
+            }, 2000);
+        }
+        
+        function takeDamage(amount) {
+            playerHealth -= amount;
+            if (playerHealth < 0) playerHealth = 0;
+            
+            // Screen flash effect
+            const flash = document.createElement('div');
+            flash.className = 'screen-flash';
+            viewport.appendChild(flash);
+            setTimeout(() => flash.remove(), 200);
+            
+            updateGameState();
+            
+            if (playerHealth <= 0) {
+                statusDiv.textContent = '💀 YOU ARE DEAD - MARS BASE COMPROMISED 💀';
+                statusDiv.style.color = '#FF0000';
+                gameActive = false;
+                
+                setTimeout(() => {
+                    if (confirm('Restart DOOM Security Protocol?')) {
+                        location.reload();
+                    }
+                }, 2000);
+            }
+        }
+        
+        function spawnImp(position, index) {
+            const imp = document.createElement('div');
+            imp.className = 'doom-imp';
+            imp.style.left = position.x + 'px';
+            imp.style.top = position.y + 'px';
+            imp.dataset.impId = index;
+            
+            let moveDirection = Math.random() * 360;
+            const moveSpeed = 0.8;
+            let attackCooldown = 0;
+            
+            imp.addEventListener('click', function(e) {
+                if (!gameActive || playerAmmo <= 0) return;
+                
+                e.stopPropagation();
+                playerAmmo -= 1;
+                
+                const rect = viewport.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const clickY = e.clientY - rect.top;
+                
+                // Effects
+                createMuzzleFlash(clickX, clickY);
+                createExplosion(position.x + 32, position.y + 32);
+                createBloodSplatter(position.x + 20, position.y + 20);
+                
+                // Remove imp
+                this.style.animation = 'explode 0.4s ease-out forwards';
+                setTimeout(() => {
+                    if (document.body.contains(this)) {
+                        this.remove();
+                        impsKilled++;
+                        updateGameState();
+                    }
+                }, 400);
+            });
+            
+            // Imp AI and movement
+            const moveInterval = setInterval(() => {
+                if (!document.body.contains(imp) || !gameActive) {
+                    clearInterval(moveInterval);
+                    return;
+                }
+                
+                // Random movement
+                moveDirection += (Math.random() - 0.5) * 45;
+                const newX = position.x + Math.cos(moveDirection * Math.PI / 180) * moveSpeed;
+                const newY = position.y + Math.sin(moveDirection * Math.PI / 180) * moveSpeed;
+                
+                // Boundary checking and wall collision
+                if (newX > 20 && newX < viewport.offsetWidth - 84 && 
+                    newY > 20 && newY < viewport.offsetHeight - 164) {
+                    position.x = newX;
+                    position.y = newY;
+                    imp.style.left = position.x + 'px';
+                    imp.style.top = position.y + 'px';
+                } else {
+                    moveDirection += 180; // Bounce off walls
+                }
+                
+                // Imp attacks player
+                attackCooldown--;
+                if (attackCooldown <= 0 && Math.random() < 0.008 && gameActive) {
+                    attackCooldown = 60; // 3 second cooldown at 50ms intervals
+                    
+                    imp.classList.add('attacking');
+                    setTimeout(() => imp.classList.remove('attacking'), 300);
+                    
+                    // Launch fireball at random screen position (simulating player position)
+                    const targetX = Math.random() * (viewport.offsetWidth - 100) + 50;
+                    const targetY = Math.random() * (viewport.offsetHeight - 200) + 50;
+                    
+                    setTimeout(() => {
+                        createFireball(position.x + 32, position.y + 32, targetX, targetY);
+                    }, 150);
+                }
+            }, 50);
+            
+            viewport.appendChild(imp);
+        }
+        
+        // Handle clicking empty space (waste ammo)
+        viewport.addEventListener('click', function(e) {
+            if (!gameActive || e.target.classList.contains('doom-imp')) return;
+            
+            if (playerAmmo > 0) {
+                playerAmmo -= 1;
+                const rect = viewport.getBoundingClientRect();
+                createMuzzleFlash(e.clientX - rect.left, e.clientY - rect.top);
+                updateGameState();
+            }
+        });
+        
+        // Initialize game
+        updateGameState();
+        
+        // Spawn imps with dramatic timing
+        spawnPositions.forEach((position, index) => {
+            setTimeout(() => {
+                if (gameActive) {
+                    spawnImp({...position}, index);
+                }
+            }, index * 600 + Math.random() * 400);
+        });
+        
+        // Authentic DOOM sound effects (text-based)
+        viewport.addEventListener('click', function(e) {
+            if (!gameActive) return;
+            
+            const sounds = ['💥 BOOM', '🔫 BANG', '💀 ARGH', '🎯 HIT'];
+            console.log(sounds[Math.floor(Math.random() * sounds.length)]);
+        });
+        
+        // Easter egg: Konami code for BFG mode
+        let konamiCode = [];
+        const konamiSequence = [38,38,40,40,37,39,37,39,66,65]; // ↑↑↓↓←→←→BA
+        
+        document.addEventListener('keydown', function(e) {
+            konamiCode.push(e.keyCode);
+            if (konamiCode.length > 10) konamiCode.shift();
+            
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                playerAmmo = 999;
+                document.getElementById('current-weapon').textContent = '7 BFG9000';
+                ammoDisplay.textContent = '∞';
+                statusDiv.textContent = '⚡ BFG MODE ACTIVATED ⚡';
+                setTimeout(() => updateGameState(), 2000);
+            }
+        });
+    });
+</script>

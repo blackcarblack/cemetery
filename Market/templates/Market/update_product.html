@@ -1,0 +1,17 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Изменить продукт</title>
+    <link rel="stylesheet" href="{% static 'Market/styles/style.css' %}">
+</head>
+<body>
+    <h2 style="text-align:center;">Изменить продукт</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+    </form>
+</body>
+</html>
