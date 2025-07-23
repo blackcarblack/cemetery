@@ -25,6 +25,11 @@ urlpatterns = [
     path('remove-from-cart/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('admin-products/', views.admin_products, name='admin_products'),
     path('admin/', views.admin_dashboard, name='admin_dashboard'),
+    # New pages
+    path('dishes/', views.dishes, name='dishes'),
+    path('team/', views.team_info, name='team_info'),
+    path('site-info/', views.site_info, name='site_info'),
+    path('add-dish-info/', views.add_dish_info, name='add_dish_info'),
     # DOOM CAPTCHA URLs
     path('captcha/image/', views.get_doom_captcha, name='doom_captcha_image'),
     path('captcha/verify/', views.verify_doom_captcha, name='verify_doom_captcha'),

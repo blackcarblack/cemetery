@@ -1,415 +1,47 @@
 {% extends 'Market/base.html' %}
-{% load static %}
-{% block title %}Мій магазин - Головна сторінка{% endblock %}
+
+{% block title %}Головна - Ресторан "Смакота"{% endblock %}
 
 {% block content %}
-{% csrf_token %}
-<!-- Космічна Корзина -->
-<div id="cart" class="cosmic-cart" style="display: none;">
-    <div class="cart-header">
-        <h3 class="cart-title">Космічна Корзина</h3>
-        <button onclick="closeCart()" class="cart-close-btn">✕</button>
-    </div>ты
-    <ul id="cart-items" class="cart-items"></ul>
-    <div id="cart-total" class="cart-total"></div>
-</div>
-
-<section class="new_page_obj">
-    <h2 class="section-title">Нові товари (за останні 2 години)</h2>
-    <div class="products-grid">
-        {% for product in new_page_obj %}
-            <div class="product">
-                <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="{{ product.name }}">
-                <p><strong>{{ product.name }}</strong></p>
-                <p>{{ product.description }}</p>
-                <p><em>{{ product.price }} грн</em></p>
-
-                <!-- Система лайков/дизлайків -->
-                <div class="rating-section">
-                    <div class="rating-buttons">
-                        <button class="like-btn" onclick="rateProduct({{ product.pk }}, true)">
-                            👍 <span class="likes-count">{{ product.annotated_likes_count|default:0 }}</span>
-                        </button>
-                        <button class="dislike-btn" onclick="rateProduct({{ product.pk }}, false)">
-                            👎 <span class="dislikes-count">{{ product.annotated_dislikes_count|default:0 }}</span>
-                        </button>
-                    </div>
-                    <div class="rating-score">
-                        Рейтинг: <span class="score">{{ product.annotated_rating_score|default:0 }}</span>
-                    </div>
-                </div>
-
-                <div class="product-actions">
-                    <div class="action-buttons-row">
-                        <button class="action-btn edit-btn" onclick="window.location.href='{% url 'Market:update_product' product.pk %}'">
-                            <div class="btn-content">
-                                <i class="btn-icon">✏️</i>
-                                <span class="btn-text">Редагувати</span>
-                            </div>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="window.location.href='{% url 'Market:delete_product' product.pk %}'">
-                            <div class="btn-content">
-                                <i class="btn-icon">🗑️</i>
-                                <span class="btn-text">Видалити</span>
-                            </div>
-                        </button>
-                    </div>
-                    <button class="action-btn cart-btn" onclick="addToCart({{ product.pk }})">
-                        <i class="btn-icon">🛒</i>
-                        <span class="btn-text">Додати до кошика</span>
-                    </button>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-    <!-- Пагинация новых -->
-    <div class="pagination">
-        {% if new_page_obj.has_previous %}
-            <a class="arrow" href="?new_page={{ new_page_obj.previous_page_number }}">&lsaquo;</a>
-        {% endif %}
-        {% for num in new_page_obj.paginator.page_range %}
-            {% if num == new_page_obj.number %}
-                <span class="active">{{ num }}</span>
-            {% else %}
-                <a href="?new_page={{ num }}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
-        {% if new_page_obj.has_next %}
-            <a class="arrow" href="?new_page={{ new_page_obj.next_page_number }}">&rsaquo;</a>
-        {% endif %}
+<!-- Hero Section -->
+<section class="hero-section text-center py-5">
+    <div class="container">
+        <h1 class="display-3 mb-4">
+            <i class="fas fa-utensils"></i> Ресторан "Смакота"
+        </h1>
+        <p class="lead mb-4">Ласкаво просимо до нашого ресторану</p>
+        <a href="{% url 'Market:dishes' %}" class="btn btn-warning btn-lg">
+            <i class="fas fa-utensils"></i> Подивитись меню
+        </a>
     </div>
 </section>
 
-<section class="other_products">
-    <h2 class="section-title">Інші товари</h2>
-    <div class="products-grid">
-        {% for product in page_obj %}
-            <div class="product">
-                <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="{{ product.name }}">
-                <p><strong>{{ product.name }}</strong></p>
-                <p>{{ product.description }}</p>
-                <p><em>{{ product.price }} грн</em></p>
-
-                <!-- Система лайків/дизлайків -->
-                <div class="rating-section">
-                    <div class="rating-buttons">
-                        <button class="like-btn" onclick="rateProduct({{ product.pk }}, true)">
-                            👍 <span class="likes-count">{{ product.annotated_likes_count|default:0 }}</span>
-                        </button>
-                        <button class="dislike-btn" onclick="rateProduct({{ product.pk }}, false)">
-                            👎 <span class="dislikes-count">{{ product.annotated_dislikes_count|default:0 }}</span>
-                        </button>
-                    </div>
-                    <div class="rating-score">
-                        Рейтинг: <span class="score">{{ product.annotated_rating_score|default:0 }}</span>
-                    </div>
-                </div>
-
-                <div class="product-actions">
-                    <div class="action-buttons-row">
-                        <button class="action-btn edit-btn" onclick="window.location.href='{% url 'Market:update_product' product.pk %}'">
-                            <div class="btn-content">
-                                <i class="btn-icon">✏️</i>
-                                <span class="btn-text">Редагувати</span>
-                            </div>
-                        </button>
-                        <button class="action-btn delete-btn" onclick="window.location.href='{% url 'Market:delete_product' product.pk %}'">
-                            <div class="btn-content">
-                                <i class="btn-icon">🗑️</i>
-                                <span class="btn-text">Видалити</span>
-                            </div>
-                        </button>
-                    </div>
-                    <button class="action-btn cart-btn" onclick="addToCart({{ product.pk }})">
-                        <i class="btn-icon">🛒</i>
-                        <span class="btn-text">Додати до кошика</span>
-                    </button>
+<!-- Basic Contact Info -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="fas fa-map-marker-alt fa-2x text-warning mb-3"></i>
+                    <h5>Адреса</h5>
+                    <p>вул. Хрещатик, 1<br>Київ, Україна</p>
                 </div>
             </div>
-        {% endfor %}
-    </div>
-
-    <!-- Пагинация остальных -->
-    <div class="pagination">
-        {% if page_obj.has_previous %}
-            <a class="arrow" href="?page={{ page_obj.previous_page_number }}">&lsaquo;</a>
-        {% endif %}
-        {% for num in page_obj.paginator.page_range %}
-            {% if num == page_obj.number %}
-                <span class="active">{{ num }}</span>
-            {% else %}
-                <a href="?page={{ num }}">{{ num }}</a>
-            {% endif %}
-        {% endfor %}
-        {% if page_obj.has_next %}
-            <a class="arrow" href="?page={{ page_obj.next_page_number }}">&rsaquo;</a>
-        {% endif %}
-    </div>
-</section>
-
-<section class="new-arrivals">
-    <h2 class="section-title">Новинки</h2>
-    <div class="products-grid">
-        <div class="product">
-            <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="Товар 1">
-            <p><strong>Товар 1</strong></p>
-            <p>Опис товару 1</p>
-            <p><em>299 грн</em></p>
-        </div>
-        <div class="product">
-            <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="Товар 2">
-            <p><strong>Товар 2</strong></p>
-            <p>Опис товару 2</p>
-            <p><em>399 грн</em></p>
-        </div>
-        <div class="product">
-            <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="Товар 3">
-            <p><strong>Товар 3</strong></p>
-            <p>Опис товару 3</p>
-            <p><em>199 грн</em></p>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="fas fa-phone fa-2x text-warning mb-3"></i>
+                    <h5>Телефон</h5>
+                    <p>+380 44 123 45 67</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="fas fa-clock fa-2x text-warning mb-3"></i>
+                    <h5>Режим роботи</h5>
+                    <p>Пн-Нд: 10:00 - 23:00</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
-
-<section class="best-sellers">
-    <h2 class="section-title">Хіти продажів</h2>
-    <div class="products-grid">
-        <div class="product">
-            <img src="{% static 'Market/imgs/2ca0915fa0953adf6be69526cd1de89b.jpg' %}" alt="Товар 4">
-            <p><strong>Хіт продажів</strong></p>
-            <p>Опис товару 4</p>
-            <p><em>599 грн</em></p>
-        </div>
-    </div>
-</section>
-
-
-<script>
-function rateProduct(productId, isLike) {
-    const formData = new FormData();
-    formData.append('is_like', isLike);
-    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-
-    fetch(`/market/rate-product/${productId}/`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Находим карточку товара
-            const productCard = document.querySelector(`button[onclick="rateProduct(${productId}, true)"]`).closest('.product');
-
-            // Обновляем счетчики
-            productCard.querySelector('.likes-count').textContent = data.likes_count;
-            productCard.querySelector('.dislikes-count').textContent = data.dislikes_count;
-            productCard.querySelector('.score').textContent = data.rating_score;
-
-            // Добавляем анимацию
-            const button = isLike ? productCard.querySelector('.like-btn') : productCard.querySelector('.dislike-btn');
-            button.classList.add('rating-animation');
-            setTimeout(() => {
-                button.classList.remove('rating-animation');
-            }, 600);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-function addToCart(productId) {
-    const formData = new FormData();
-    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-
-    fetch(`/market/add-to-cart/${productId}/`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showCart();
-            updateCartDisplay(data.cart_items);
-
-            // Показываем уведомление
-            showNotification(data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-function showCart() {
-    const cart = document.getElementById('cart');
-    cart.style.display = 'block';
-}
-
-function closeCart() {
-    const cart = document.getElementById('cart');
-    cart.style.display = 'none';
-}
-
-function updateCartDisplay(cartItems) {
-    const cartItemsList = document.getElementById('cart-items');
-    const cartTotal = document.getElementById('cart-total');
-
-    cartItemsList.innerHTML = '';
-    let total = 0;
-
-    if (cartItems.length === 0) {
-        cartItemsList.innerHTML = '<li class="cart-empty">Кошик порожній</li>';
-        cartTotal.innerHTML = `Всього: 0.00 грн`;
-        return;
-    }
-
-    cartItems.forEach(item => {
-        const listItem = document.createElement('li');
-        listItem.className = 'cart-item';
-        listItem.innerHTML = `
-            <div class="cart-item-header">
-                <div class="cart-item-name">${item.name}</div>
-                <button class="cart-remove-btn" onclick="removeFromCart(${item.id})" title="Видалити з кошика">✕</button>
-            </div>
-            <div class="cart-item-controls">
-                <div class="quantity-controls">
-                    <button class="quantity-btn minus" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">−</button>
-                    <input type="number" class="quantity-input" value="${item.quantity}" min="1" onchange="updateQuantity(${item.id}, this.value)">
-                    <button class="quantity-btn plus" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
-                </div>
-                <div class="cart-item-price">
-                    ${item.price} грн × ${item.quantity} = ${(parseFloat(item.price) * item.quantity).toFixed(2)} грн
-                </div>
-            </div>
-        `;
-        cartItemsList.appendChild(listItem);
-        total += parseFloat(item.price) * item.quantity;
-    });
-
-    cartTotal.innerHTML = `Всього: ${total.toFixed(2)} грн`;
-}
-
-function showNotification(message) {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #28a745;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        z-index: 1001;
-        animation: slideDown 0.3s ease;
-    `;
-    notification.textContent = message;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        notification.remove();
-    }, 3000);
-}
-
-function updateQuantity(productId, newQuantity) {
-    const formData = new FormData();
-    formData.append('quantity', newQuantity);
-    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-
-    fetch(`/market/update-cart/${productId}/`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            updateCartDisplay(data.cart_items);
-            showNotification(data.message);
-        } else {
-            showNotification('Помилка при оновленні кількості');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Помилка при оновленні кількості');
-    });
-}
-
-function removeFromCart(productId) {
-    const formData = new FormData();
-    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-
-    fetch(`/market/remove-from-cart/${productId}/`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            updateCartDisplay(data.cart_items);
-            showNotification(data.message);
-        } else {
-            showNotification('Помилка при видаленні товару');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        showNotification('Помилка при видаленні товару');
-    });
-}
-
-// Загружаем корзину при загрузке страницы
-window.addEventListener('load', function() {
-    fetch('/market/get-cart/')
-    .then(response => {
-        if (!response.ok) {
-            console.warn('Не удалось загрузить корзину');
-            return;
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data && data.cart_items && data.cart_items.length > 0) {
-            updateCartDisplay(data.cart_items);
-        }
-    })
-    .catch(error => {
-        console.warn('Ошибка при загрузке корзины:', error);
-    });
-});
-</script>
-
-<style>
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-}
-
-.add-to-cart-btn:hover {
-    background: #218838 !important;
-    transform: translateY(-2px);
-}
-</style>
 {% endblock %}
-
