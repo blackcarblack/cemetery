@@ -17,8 +17,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'dishes' %}active{% endif %}" 
-                       href="{% url 'Market:dishes' %}">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dishes' %}active{% endif %}"
+                       href="#">
                         <i class="fas fa-utensils"></i> Страви
                     </a>
                 </li>
@@ -30,13 +30,13 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'team_info' %}active{% endif %}" 
-                       href="{% url 'Market:team_info' %}">
+                       href="{% url 'Market:team' %}">
                         <i class="fas fa-users"></i> Команда
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.resolver_match.url_name == 'site_info' %}active{% endif %}" 
-                       href="{% url 'Market:site_info' %}">
+                       href="#">
                         <i class="fas fa-laptop"></i> Про сайт
                     </a>
                 </li>
@@ -69,12 +69,12 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'Market:login' %}">
+                        <a class="nav-link" href="#">
                             <i class="fas fa-sign-in-alt"></i> Вхід
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'Market:register' %}">
+                        <a class="nav-link" href="#">
                             <i class="fas fa-user-plus"></i> Реєстрація
                         </a>
                     </li>
