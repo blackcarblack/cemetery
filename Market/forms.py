@@ -7,25 +7,26 @@ from .models import Product
 User = get_user_model()
 
 class UserRegistrationForm(ModelForm):
-    password = CharField(widget=PasswordInput, label="Пароль")
-    confirm_password = CharField(widget=PasswordInput, label="Підтвердіть пароль")
+    password = CharField(widget=PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Введіть пароль'}), label="Пароль")
+    confirm_password = CharField(widget=PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Підтвердіть пароль'}), label="Підтвердіть пароль")
     captcha = CharField(widget=HiddenInput(), label="", required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'age', 'country', 'address']
+        fields = ['username', 'email', 'password']
         widgets = {
-            'username': TextInput(attrs={'class': 'form-input'}),
-            'email': TextInput(attrs={'class': 'form-input'}),
-            'age': NumberInput(attrs={'class': 'form-input'}),
-            'country': TextInput(attrs={'class': 'form-input'}),
-            'address': Textarea(attrs={'class': 'form-input', 'rows': 3}),
+            'username': TextInput(attrs={'class': 'form-input', 'placeholder': 'Введіть ім\'я користувача'}),
+            'email': TextInput(attrs={'class': 'form-input', 'placeholder': 'Введіть email адресу'}),
+        }
+        labels = {
+            'username': 'Ім\'я користувача',
+            'email': 'Email адреса',
         }
 
     def clean_captcha(self):
         captcha_token = self.cleaned_data.get('captcha')
         if captcha_token != 'DOOM_CAPTCHA_PASSED':
-            raise ValidationError("Будь ласка, пройдіть CAPTCHA.")
+            raise ValidationError("Будь ласка, пройдіть DOOM CAPTCHA.")
         return captcha_token
 
     def clean(self):
