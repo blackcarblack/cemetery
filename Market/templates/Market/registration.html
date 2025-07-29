@@ -1,15 +1,221 @@
 {% extends 'Market/base.html' %}
 {% load static %}
 
-{% block title %}Реєстрація - Market{% endblock %}
+{% block title %}Реєстрація - Ресторан "Смакота"{% endblock %}
+
+{% block extra_css %}
+<style>
+  .auth-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0 -15px;
+  }
+  
+  .auth-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    animation: slideUp 0.6s ease-out;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .auth-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .auth-header h2 {
+    color: #333;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .auth-header p {
+    color: #666;
+    font-size: 16px;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e1e8ed;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+  
+  .btn-register {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+  
+  .btn-register:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  }
+  
+  .form-links {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 1px solid #e1e8ed;
+  }
+  
+  .form-links a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  
+  .form-links a:hover {
+    color: #764ba2;
+  }
+  
+  .alert {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+  }
+  
+  .field-errors {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  
+  .captcha-container {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px dashed #e1e8ed;
+  }
+  
+  .captcha-simple {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    display: inline-block;
+    margin: 10px 0;
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// DOOM Captcha integration
+var captcha_done = false;
+
+// Listen for messages from the DOOM captcha iframe
+window.addEventListener('message', function(e) {
+    if (e.origin.indexOf('vivirenremoto.github.io') > -1) {
+        captcha_done = true;
+        document.getElementById('captcha_status').value = 'true';
+        document.getElementById('doom_captcha').style.borderColor = '#28a745';
+        
+        // Show success message
+        const successMsg = document.createElement('div');
+        successMsg.innerHTML = '<i class="fas fa-check-circle"></i> DOOM Captcha пройдена!';
+        successMsg.style.cssText = 'color: #28a745; font-weight: bold; margin-top: 10px; text-align: center;';
+        document.getElementById('doom-captcha-wrapper').appendChild(successMsg);
+    }
+}, false);
+
+// Prevent form submission if captcha not completed
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.registration-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!captcha_done) {
+                e.preventDefault();
+                document.getElementById('doom_captcha').style.borderColor = '#dc3545';
+                
+                // Show error message
+                const errorMsg = document.getElementById('captcha-error') || document.createElement('div');
+                errorMsg.id = 'captcha-error';
+                errorMsg.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Пожалуйста, пройдите DOOM Captcha!';
+                errorMsg.style.cssText = 'color: #dc3545; font-weight: bold; margin-top: 10px; text-align: center;';
+                
+                if (!document.getElementById('captcha-error')) {
+                    document.getElementById('doom-captcha-wrapper').appendChild(errorMsg);
+                }
+                
+                return false;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
 
 {% block content %}
-<div class="container">
-  <div class="registration-wrapper">
-    <h2>Реєстрація нового користувача</h2>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2><i class="fas fa-user-plus"></i> Реєстрація</h2>
+      <p>Створіть обліковий запис у ресторані "Смакота"</p>
+    </div>
+    
+    {% include 'Market/messages.html' %}
     
     {% if form.non_field_errors %}
-      <div class="alert alert-error">
+      <div class="alert alert-danger">
         {{ form.non_field_errors }}
       </div>
     {% endif %}
@@ -18,35 +224,49 @@
       {% csrf_token %}
       
       {% for field in form %}
-        <div class="form-group">
-          {{ field.label_tag }}
-          {{ field }}
-          {% if field.help_text %}
-            <small class="help-text">{{ field.help_text }}</small>
-          {% endif %}
-          {% if field.errors %}
-            <div class="field-errors">
-              {{ field.errors }}
-            </div>
-          {% endif %}
-        </div>
+        {% if field.name != 'captcha' %}
+          <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+              <small class="help-text text-muted">{{ field.help_text }}</small>
+            {% endif %}
+            {% if field.errors %}
+              <div class="field-errors">
+                {{ field.errors }}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
       {% endfor %}
       
-      <div class="form-group">
-        <label for="id_captcha">Captcha</label>
-        {% include 'Market/doom_captcha.html' %}
-        {% if form.captcha.errors %}
-            <div class="field-errors">
-              {{ form.captcha.errors }}
-            </div>
-        {% endif %}
+      <div class="captcha-container">
+        <h4 style="text-align: center; color: #FF0000; margin-bottom: 15px;">
+          <i class="fas fa-skull"></i> НАСТОЯЩАЯ DOOM КАПЧА
+        </h4>
+        <div id="doom-captcha-wrapper" style="text-align: center;">
+          <iframe 
+            id="doom_captcha" 
+            src="https://vivirenremoto.github.io/doomcaptcha/captcha.html?enemies=4&countdown=false" 
+            style="width:100%; max-width:400px; height:200px; border:2px solid #667eea; border-radius:8px;"
+            allowfullscreen>
+          </iframe>
+          <p style="margin-top: 10px; color: #666; font-size: 14px;">
+            🎮 Убейте 4 врагов в настоящем DOOM, чтобы доказать, что вы человек!<br>
+            <small>Используйте мышь для движения прицела и клик для стрельбы</small>
+          </p>
+        </div>
+        <input type="hidden" id="captcha_status" name="captcha_status" value="false">
       </div>
       
-      <button type="submit" class="btn btn-primary">Зареєструватися</button>
+      <button type="submit" class="btn-register">
+        <i class="fas fa-user-plus me-2"></i>
+        Зареєструватися
+      </button>
     </form>
     
     <div class="form-links">
-      <p>Вже маєте акаунт? <a href="{% url 'Market:login' %}">Увійти</a></p>
+      <p>Вже маєте акаунт? <a href="{% url 'Market:login' %}"><i class="fas fa-sign-in-alt"></i> Увійти</a></p>
     </div>
   </div>
 </div>

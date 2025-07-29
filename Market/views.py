@@ -45,7 +45,20 @@ def about_me(request):
     return render(request, "Market/about_me.html")
 
 def register(request):
-    return render(request, "Market/register.html")
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            # Check DOOM captcha status
+            captcha_status = request.POST.get('captcha_status', 'false')
+            if captcha_status == 'true':
+                user = form.save()
+                messages.success(request, 'Account created successfully! You can now log in.')
+                return redirect('Market:login')
+            else:
+                messages.error(request, 'Please complete the DOOM Captcha to finish registration.')
+    else:
+        form = UserRegistrationForm()
+    return render(request, "Market/registration.html", {'form': form})
 
 def user_login(request):
     if request.method == 'POST':
