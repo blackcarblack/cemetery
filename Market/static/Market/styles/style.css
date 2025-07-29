@@ -45,7 +45,6 @@ body {
     background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
     min-height: 100vh;
     position: relative;
-    overflow-x: hidden;
 }
 
 body::before {
@@ -62,167 +61,9 @@ body::before {
     z-index: -1;
 }
 
-/* СТАБИЛЬНЫЙ ФУТУРИСТИЧНЫЙ ХЕДЕР */
-header {
-    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-    border-bottom: 2px solid #00d4ff;
-    padding: 1rem 0;
-    box-shadow: 
-        0 4px 30px rgba(0, 212, 255, 0.3),
-        0 0 60px rgba(0, 212, 255, 0.1);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 1000;
-    opacity: 1;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: translateY(0);
-}
+/* ВСІ НАВІГАЦІЙНІ СТИЛІ ВИДАЛЕНІ - використовуються ТІЛЬКИ стилі з base.html */
 
-header.scrolled {
-    top: -150px;
-    opacity: 0;
-}
-
-@keyframes slideDownHeader {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-header::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--primary-gradient);
-    opacity: 0;
-    transition: opacity var(--transition-smooth);
-    z-index: -1;
-}
-
-header:hover::before {
-    opacity: 0.1;
-}
-
-header h1 {
-    font-family: 'Inter', sans-serif;
-    text-align: center;
-    color: #00d4ff;
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    font-weight: 700;
-    margin-bottom: 1rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
-    cursor: pointer;
-}
-
-@keyframes textGlow {
-    from {
-        filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3));
-    }
-    to {
-        filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.6));
-    }
-}
-
-header h1:hover {
-    transform: scale(1.05);
-    animation-play-state: paused;
-}
-
-/* ФУТУРИСТИЧНАЯ НАВИГАЦИЯ */
-nav {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border: 1px solid #00d4ff;
-    border-radius: 25px;
-    padding: 8px;
-    margin: 0 auto;
-    max-width: 600px;
-    box-shadow: 
-        0 0 30px rgba(0, 212, 255, 0.2),
-        inset 0 1px 0 rgba(0, 212, 255, 0.1);
-    position: relative;
-}
-
-nav ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-}
-
-nav li {
-    flex: 1;
-}
-
-nav a {
-    display: block;
-    text-decoration: none;
-    color: #00d4ff;
-    font-weight: 600;
-    padding: 12px 20px;
-    border-radius: 20px;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border: 1px solid transparent;
-    position: relative;
-}
-
-nav a::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-    border-radius: 20px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-nav a:hover {
-    color: #ffffff;
-    border-color: #00d4ff;
-    box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
-}
-
-nav a:hover::before {
-    opacity: 1;
-}
-
-nav a.active {
-    background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
-    color: #ffffff;
-    font-weight: 700;
-    box-shadow: 
-        0 0 25px rgba(0, 212, 255, 0.5),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-nav a.active:hover {
-    box-shadow: 
-        0 0 30px rgba(0, 212, 255, 0.7),
-        inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-/* ИДЕАЛЬНЫЙ ОСНОВНОЙ КОНТЕНТ */
+/* ОСНОВНИЙ КОНТЕНТ */
 main {
     max-width: 1400px;  /* Increased from 1200px */
     margin: 0 auto;
@@ -745,56 +586,11 @@ main {
     font-size: 1.3rem;
 }
 
-/* КОСМІЧНА КОРЗИНА - ІДЕАЛЬНА СТИЛІЗАЦІЯ */
-.cosmic-cart {
-    position: fixed;
-    right: 20px;
-    top: 20px;
-    max-width: 320px;
-    min-width: 300px;
-    background: linear-gradient(135deg, 
-        rgba(26, 26, 46, 0.95) 0%, 
-        rgba(22, 33, 62, 0.95) 50%, 
-        rgba(16, 20, 40, 0.95) 100%);
-    backdrop-filter: blur(25px) saturate(180%);
-    border: 2px solid #00d4ff;
-    border-radius: var(--border-radius-lg);
-    box-shadow: 
-        0 15px 50px rgba(0, 212, 255, 0.2),
-        0 0 40px rgba(0, 212, 255, 0.1),
-        inset 0 1px 0 rgba(0, 212, 255, 0.2);
-    padding: var(--spacing-md);
-    z-index: 10000;
-    transition: all var(--transition-smooth);
-    animation: cosmicCartSlideIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    overflow: hidden;
-}
+/* КОСМІЧНА КОРЗИНА - СТИЛІ ПЕРЕМІЩЕНІ ДО ОКРЕМИХ СТОРІНОК */
 
-.cosmic-cart::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, 
-        transparent 30%, 
-        rgba(0, 212, 255, 0.05) 50%, 
-        transparent 70%);
-    animation: cosmicScan 3s ease-in-out infinite;
-    pointer-events: none;
-}
+/* СТИЛІ КОРЗИНИ ПЕРЕМІЩЕНІ */
 
-@keyframes cosmicCartSlideIn {
-    from {
-        opacity: 0;
-        transform: translateX(100%) scale(0.8) rotateY(45deg);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0) scale(1) rotateY(0deg);
-    }
-}
+/* АНІМАЦІЇ КОРЗИНИ ПЕРЕМІЩЕНІ */
 
 @keyframes cosmicScan {
     0%, 100% {
@@ -1465,17 +1261,17 @@ a:active, button:active, [onclick]:active {
         margin-bottom: 1rem;
     }
     
-    nav {
+    nav.disabled-styles {
         max-width: 350px;
         border-radius: 25px;
     }
     
-    nav ul {
+    nav.disabled-styles ul {
         flex-direction: row;
         gap: 2px;
     }
     
-    nav a {
+    nav.disabled-styles a {
         padding: 10px 12px;
         font-size: 0.8rem;
         border-radius: 23px;
@@ -1624,21 +1420,7 @@ nav a:active::after,
 }
 
 /* Notification styles */
-.notification {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--glass-bg);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-md) var(--spacing-lg);
-    color: var(--text-light);
-    box-shadow: var(--glass-shadow);
-    z-index: 10000;
-    animation: notificationSlide 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
+/* NOTIFICATION СТИЛІ ВИДАЛЕНІ - уникнення конфлікту z-index */
 
 @keyframes notificationSlide {
     from {

@@ -1,0 +1,125 @@
+{% extends 'Market/base.html' %}
+
+{% block title %}Про сайт - Ресторан "Смакота"{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-5 bg-dark text-white">
+    <div class="container text-center">
+        <h1 class="display-4 mb-3">
+            <i class="fas fa-laptop text-warning"></i> Про наш сайт
+        </h1>
+        <p class="lead">Сучасна платформа для замовлення улюблених страв</p>
+    </div>
+</section>
+
+<!-- Site Features -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-mobile-alt fa-3x text-warning mb-3"></i>
+                        <h4 class="card-title">Адаптивний дизайн</h4>
+                        <p class="card-text">Наш сайт оптимізований для всіх пристроїв - від смартфонів до настільних комп'ютерів. Зручність використання на будь-якому екрані.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shopping-cart fa-3x text-warning mb-3"></i>
+                        <h4 class="card-title">Онлайн замовлення</h4>
+                        <p class="card-text">Легке та швидке оформлення замовлень через інтернет. Додавайте страви в кошик та оформлюйте замовлення за лічені хвилини.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-shield-alt fa-3x text-warning mb-3"></i>
+                        <h4 class="card-title">Безпека даних</h4>
+                        <p class="card-text">Ваші особисті дані та платіжна інформація захищені сучасними методами шифрування та безпечними протоколами передачі.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100 shadow">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-3x text-warning mb-3"></i>
+                        <h4 class="card-title">24/7 доступність</h4>
+                        <p class="card-text">Сайт працює цілодобово. Ви можете переглядати меню та оформлювати замовлення у будь-який зручний для вас час.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Technical Info -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h2 class="text-center mb-5">
+                    <i class="fas fa-cogs text-warning"></i> Технічна інформація
+                </h2>
+                <div class="row text-center">
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3">
+                            <i class="fab fa-python fa-2x text-warning mb-2"></i>
+                            <h5>Django</h5>
+                            <p class="text-muted">Потужний Python фреймворк для веб-розробки</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3">
+                            <i class="fab fa-bootstrap fa-2x text-warning mb-2"></i>
+                            <h5>Bootstrap 5</h5>
+                            <p class="text-muted">Сучасний CSS фреймворк для адаптивного дизайну</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="p-3">
+                            <i class="fas fa-database fa-2x text-warning mb-2"></i>
+                            <h5>База даних</h5>
+                            <p class="text-muted">Надійне зберігання всієї інформації про страви та замовлення</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact for Support -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 mx-auto text-center">
+                <h2 class="mb-4">
+                    <i class="fas fa-headset text-warning"></i> Технічна підтримка
+                </h2>
+                <p class="lead mb-4">Маєте питання щодо роботи сайту? Наша команда технічної підтримки завжди готова допомогти!</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <i class="fas fa-envelope fa-lg text-warning"></i>
+                            <strong> Email:</strong> support@smakota.ua
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <i class="fas fa-phone fa-lg text-warning"></i>
+                            <strong> Телефон:</strong> +380 44 123 45 68
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

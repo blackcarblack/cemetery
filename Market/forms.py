@@ -6,64 +6,108 @@ from .models import Product
 
 User = get_user_model()
 
+
 class UserRegistrationForm(ModelForm):
-    password = CharField(widget=PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Введіть пароль'}), label="Пароль")
-    confirm_password = CharField(widget=PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Підтвердіть пароль'}), label="Підтвердіть пароль")
-    captcha = CharField(widget=HiddenInput(), label="", required=False)
+    """Форма реєстрації користувача"""
+    password = CharField(
+        widget=PasswordInput(attrs={'class': 'form-control'}),
+        label='Пароль'
+    )
+    password_confirm = CharField(
+        widget=PasswordInput(attrs={'class': 'form-control'}),
+        label='Підтвердіть пароль'
+    )
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'first_name', 'last_name']
         widgets = {
-            'username': TextInput(attrs={'class': 'form-input', 'placeholder': 'Введіть ім\'я користувача'}),
-            'email': TextInput(attrs={'class': 'form-input', 'placeholder': 'Введіть email адресу'}),
+            'username': TextInput(attrs={'class': 'form-control'}),
+            'email': TextInput(attrs={'class': 'form-control'}),
+            'first_name': TextInput(attrs={'class': 'form-control'}),
+            'last_name': TextInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'username': 'Ім\'я користувача',
-            'email': 'Email адреса',
+            'email': 'Електронна пошта',
+            'first_name': 'Ім\'я',
+            'last_name': 'Прізвище',
         }
 
-    def clean_captcha(self):
-        captcha_token = self.cleaned_data.get('captcha')
-        if captcha_token != 'DOOM_CAPTCHA_PASSED':
-            raise ValidationError("Будь ласка, пройдіть DOOM CAPTCHA.")
-        return captcha_token
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
-        
-        if password and confirm_password and password != confirm_password:
-            raise ValidationError("Паролі не співпадають")
-        
-        return cleaned_data
+    def clean_password_confirm(self):
+        password = self.cleaned_data.get('password')
+        password_confirm = self.cleaned_data.get('password_confirm')
+        if password and password_confirm and password != password_confirm:
+            raise ValidationError('Паролі не співпадають')
+        return password_confirm
 
 
-class AdminRegistrationForm(UserRegistrationForm):
-    class Meta(UserRegistrationForm.Meta):
-        fields = UserRegistrationForm.Meta.fields
-        
+class AdminRegistrationForm(ModelForm):
+    """Форма реєстрації адміністратора"""
+    password = CharField(
+        widget=PasswordInput(attrs={'class': 'form-control'}),
+        label='Пароль'
+    )
+    password_confirm = CharField(
+        widget=PasswordInput(attrs={'class': 'form-control'}),
+        label='Підтвердіть пароль'
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+        widgets = {
+            'username': TextInput(attrs={'class': 'form-control'}),
+            'email': TextInput(attrs={'class': 'form-control'}),
+            'first_name': TextInput(attrs={'class': 'form-control'}),
+            'last_name': TextInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'username': 'Ім\'я користувача',
+            'email': 'Електронна пошта',
+            'first_name': 'Ім\'я',
+            'last_name': 'Прізвище',
+        }
+
+    def clean_password_confirm(self):
+        password = self.cleaned_data.get('password')
+        password_confirm = self.cleaned_data.get('password_confirm')
+        if password and password_confirm and password != password_confirm:
+            raise ValidationError('Паролі не співпадають')
+        return password_confirm
+
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.is_staff = True
+        user.is_staff = True  # Робимо користувача адміністратором
         user.is_superuser = True
         if commit:
             user.save()
         return user
 
 
-class LoginForm(AuthenticationForm):
-    username = CharField(widget=TextInput(attrs={'class': 'form-input', 'placeholder': 'Ім\'я користувача'}))
-    password = CharField(widget=PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Пароль'}))
-
-
 class ProductForm(ModelForm):
+    """Форма товару"""
     class Meta:
         model = Product
-        fields = ['name', 'price', 'description']
+        fields = ['name', 'description', 'price']
         widgets = {
-            'name': TextInput(attrs={'class': 'form-input'}),
-            'price': NumberInput(attrs={'class': 'form-input'}),
-            'description': Textarea(attrs={'class': 'form-input'}),
+            'name': TextInput(attrs={'class': 'form-control'}),
+            'description': Textarea(attrs={'class': 'form-control', 'rows': 4}),
+            'price': NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
         }
+        labels = {
+            'name': 'Назва товару',
+            'description': 'Опис товару',
+            'price': 'Ціна (грн)',
+        }
+
+
+class LoginForm(AuthenticationForm):
+    """Форма входу"""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control'})
+        self.fields['password'].widget.attrs.update({'class': 'form-control'})
+        self.fields['username'].label = 'Ім\'я користувача'
+        self.fields['password'].label = 'Пароль'
+
