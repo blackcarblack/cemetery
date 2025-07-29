@@ -1,0 +1,418 @@
+{% extends 'Market/base.html' %}
+
+{% block title %}Реєстрація - Ресторан "Смакота"{% endblock %}
+
+{% block content %}
+<!-- Restaurant Registration Header -->
+<section class="py-5 bg-dark text-white">
+    <div class="container text-center">
+        <h1 class="display-4 mb-3">
+            <i class="fas fa-user-plus text-warning"></i> Реєстрація
+        </h1>
+        <p class="lead">Приєднуйтесь до родини ресторану "Смакота"</p>
+    </div>
+</section>
+
+<!-- Registration Form Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-warning text-dark text-center py-4">
+                        <h3 class="mb-0">
+                            <i class="fas fa-utensils me-2"></i>
+                            Створення облікового запису
+                        </h3>
+                        <p class="mb-0 mt-2">Заповніть форму нижче для реєстрації</p>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <form method="post" id="register-form">
+                            {% csrf_token %}
+                            
+                            <!-- Personal Information Section -->
+                            <div class="mb-4">
+                                <h5 class="text-warning mb-3">
+                                    <i class="fas fa-user me-2"></i>
+                                    Особиста інформація
+                                </h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">
+                                            <i class="fas fa-user me-1"></i>{{ form.username.label }}
+                                        </label>
+                                        {{ form.username }}
+                                        {% if form.username.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {% for error in form.username.errors %}
+                                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">
+                                            <i class="fas fa-envelope me-1"></i>{{ form.email.label }}
+                                        </label>
+                                        {{ form.email }}
+                                        {% if form.email.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {% for error in form.email.errors %}
+                                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">
+                                            <i class="fas fa-id-badge me-1"></i>{{ form.first_name.label }}
+                                        </label>
+                                        {{ form.first_name }}
+                                        {% if form.first_name.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {% for error in form.first_name.errors %}
+                                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">
+                                            <i class="fas fa-id-badge me-1"></i>{{ form.last_name.label }}
+                                        </label>
+                                        {{ form.last_name }}
+                                        {% if form.last_name.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {% for error in form.last_name.errors %}
+                                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Security Section -->
+                            <div class="mb-4">
+                                <h5 class="text-warning mb-3">
+                                    <i class="fas fa-shield-alt me-2"></i>
+                                    Безпека
+                                </h5>
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">
+                                            <i class="fas fa-lock me-1"></i>{{ form.password.label }}
+                                        </label>
+                                        {{ form.password }}
+                                        {% if form.password.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {% for error in form.password.errors %}
+                                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label">
+                                            <i class="fas fa-lock me-1"></i>{{ form.password_confirm.label }}
+                                        </label>
+                                        {{ form.password_confirm }}
+                                        {% if form.password_confirm.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {% for error in form.password_confirm.errors %}
+                                                    <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DOOM CAPTCHA Section -->
+                            <div class="mb-4">
+                                <h5 class="text-warning mb-3">
+                                    <i class="fas fa-gamepad me-2"></i>
+                                    DOOM® Верифікація
+                                </h5>
+                                
+                                <div class="card border-warning">
+                                    <div class="card-header bg-warning text-dark">
+                                        <h6 class="mb-1">
+                                            <i class="fas fa-skull-crossbones me-2"></i>
+                                            Автентична гра DOOM 1993
+                                        </h6>
+                                        <small>
+                                            Доведіть, що ви людина, пройшовши справжню гру DOOM! 
+                                            Вбийте <strong>3 монстри</strong> щоб продовжити реєстрацію.
+                                        </small>
+                                    </div>
+                                    <div class="card-body text-center">
+                                        <div class="doom-game-container mb-3">
+                                            <iframe id="doom-captcha-frame" 
+                                                    src="https://doom-captcha.vercel.app/" 
+                                                    width="1200" 
+                                                    height="800" 
+                                                    frameborder="0"
+                                                    class="border rounded shadow"
+                                                    title="DOOM CAPTCHA - Kill 3 monsters to prove you're human"
+                                                    loading="lazy">
+                                            </iframe>
+                                        </div>
+                                        
+                                        <button type="button" id="doom-fullscreen" class="btn btn-warning btn-sm mb-3">
+                                            <i class="fas fa-expand-arrows-alt me-1"></i>
+                                            Повноекранний режим
+                                        </button>
+                                        
+                                        <div class="row text-center">
+                                            <div class="col-6 col-md-3">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-arrows-alt text-warning"></i><br>
+                                                    Стрілки - Рух
+                                                </small>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-crosshairs text-warning"></i><br>
+                                                    Пробіл - Стрільба
+                                                </small>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-bolt text-warning"></i><br>
+                                                    ALT + стрілки
+                                                </small>
+                                            </div>
+                                            <div class="col-6 col-md-3">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-target text-warning"></i><br>
+                                                    Вбити 3 монстри
+                                                </small>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Hidden fields for form validation -->
+                                        <input type="hidden" id="doom_completed" name="doom_completed" value="false">
+                                        <input type="hidden" id="doom_session" name="doom_session" value="">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-warning btn-lg">
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Створити аккаунт
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="text-center">
+                            <p class="text-muted mb-2">Вже маєте аккаунт?</p>
+                            <a href="{% url 'Market:login' %}" class="btn btn-outline-warning">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Увійти в систему
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Responsive DOOM CAPTCHA styling to match restaurant theme */
+#doom-captcha-frame {
+    max-width: 100%;
+    height: 800px;
+}
+
+@media (max-width: 991px) {
+    #doom-captcha-frame {
+        height: 600px;
+    }
+}
+
+@media (max-width: 767px) {
+    #doom-captcha-frame {
+        height: 450px;
+    }
+}
+
+@media (max-width: 575px) {
+    #doom-captcha-frame {
+        height: 350px;
+    }
+}
+
+/* Enhanced styling for restaurant theme */
+.doom-game-container {
+    position: relative;
+    display: inline-block;
+}
+
+/* Success notification animation */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let doomState = {
+        completed: false,
+        sessionId: generateSessionId(),
+        startTime: Date.now()
+    };
+    
+    // Generate unique session ID
+    function generateSessionId() {
+        return Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+    }
+    
+    // Initialize DOOM CAPTCHA
+    initializeDoomCaptcha();
+    
+    // Fullscreen button handler
+    document.getElementById('doom-fullscreen').addEventListener('click', function() {
+        toggleFullscreen();
+    });
+    
+    function initializeDoomCaptcha() {
+        const iframe = document.getElementById('doom-captcha-frame');
+        
+        // Update hidden fields
+        document.getElementById('doom_session').value = doomState.sessionId;
+        
+        // Listen for iframe messages
+        window.addEventListener('message', handleDoomMessage);
+        
+        // Check iframe readiness
+        iframe.onload = function() {
+            console.log('🎮 DOOM CAPTCHA загружена!');
+        };
+        
+        // Handle loading errors
+        iframe.onerror = function() {
+            console.error('❌ Помилка завантаження DOOM CAPTCHA');
+        };
+    }
+    
+    function handleDoomMessage(event) {
+        // Security: check origin
+        if (event.origin !== 'https://doom-captcha.vercel.app') {
+            return;
+        }
+        
+        const data = event.data;
+        
+        if (data.type === 'DOOM_CAPTCHA_COMPLETED') {
+            doomState.completed = true;
+            document.getElementById('doom_completed').value = 'true';
+            updateDoomStatus('CAPTCHA пройдена!', 'success', 3);
+            showSuccessMessage();
+        } else if (data.type === 'DOOM_CAPTCHA_PROGRESS') {
+            const killed = data.killed || 0;
+            updateDoomStatus(`Вбито: ${killed}/3`, 'progress', killed);
+        } else if (data.type === 'DOOM_CAPTCHA_DEATH') {
+            updateDoomStatus('Спробуйте ще раз!', 'warning', 0);
+        }
+    }
+    
+    function updateDoomStatus(message, type, progress = 0) {
+        console.log(`DOOM Status: ${message} (${progress}/3)`);
+        
+        // Update game state
+        if (progress >= 3) {
+            doomState.completed = true;
+            document.getElementById('doom_completed').value = 'true';
+        }
+    }
+    
+    function showSuccessMessage() {
+        const notification = document.createElement('div');
+        notification.className = 'alert alert-success position-fixed';
+        notification.style.cssText = `
+            top: 20px; right: 20px; z-index: 9999; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            animation: slideInRight 0.5s ease-out;
+        `;
+        notification.innerHTML = `
+            <i class="fas fa-trophy text-warning"></i>
+            <strong>Вітаємо!</strong> Ви успішно пройшли DOOM CAPTCHA!
+            <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 5000);
+    }
+    
+    function toggleFullscreen() {
+        const iframe = document.getElementById('doom-captcha-frame');
+        
+        if (!document.fullscreenElement) {
+            iframe.requestFullscreen().catch(err => {
+                console.log(`Помилка входу в повноекранний режим: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+    
+    // Form validation
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+        if (!doomState.completed) {
+            e.preventDefault();
+            alert('⚠️ Спочатку пройдіть DOOM CAPTCHA! Вбийте 3 монстри в грі.');
+            return false;
+        }
+        
+        // Additional time check (minimum 15 seconds)
+        const timeSpent = (Date.now() - doomState.startTime) / 1000;
+        if (timeSpent < 15) {
+            e.preventDefault();
+            alert('⚠️ Пройдіть CAPTCHA спочатку!');
+            return false;
+        }
+        
+        console.log('✅ Форма реєстрації відправляється з пройденою DOOM CAPTCHA');
+    });
+});
+</script>
+{% endblock %}

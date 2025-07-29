@@ -1,0 +1,104 @@
+{% extends 'Market/base.html' %}
+
+{% block title %}{{ title }} - Ресторан "Смакота"{% endblock %}
+
+{% block content %}
+<!-- Profile Header -->
+<section class="py-5 bg-dark text-white">
+    <div class="container text-center">
+        <h1 class="display-4 mb-3">
+            <i class="fas fa-user-circle text-warning"></i> Профіль користувача
+        </h1>
+        <p class="lead">{{ user.get_full_name|default:user.username }}</p>
+    </div>
+</section>
+
+<!-- Profile Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-body p-4">
+                        <h4 class="card-title text-center mb-4">
+                            <i class="fas fa-info-circle text-warning"></i> Інформація про користувача
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <strong><i class="fas fa-user"></i> Ім'я користувача:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ user.username }}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <strong><i class="fas fa-envelope"></i> Email:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ user.email|default:"Не вказано" }}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <strong><i class="fas fa-id-card"></i> Повне ім'я:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {% if user.first_name or user.last_name %}
+                                    {{ user.first_name }} {{ user.last_name }}
+                                {% else %}
+                                    Не вказано
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <strong><i class="fas fa-calendar-alt"></i> Дата реєстрації:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {{ user.date_joined|date:"d.m.Y" }}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <strong><i class="fas fa-clock"></i> Останній вхід:</strong>
+                            </div>
+                            <div class="col-sm-8">
+                                {% if user.last_login %}
+                                    {{ user.last_login|date:"d.m.Y H:i" }}
+                                {% else %}
+                                    Ніколи
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="text-center">
+                            <a href="{% url 'Market:index' %}" class="btn btn-warning me-2">
+                                <i class="fas fa-home"></i> На головну
+                            </a>
+                            <a href="{% url 'Market:logout' %}" class="btn btn-outline-danger">
+                                <i class="fas fa-sign-out-alt"></i> Вийти
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
