@@ -3,8 +3,7 @@
 Включает логин, регистрацию и выход из системы
 """
 
-import base64
-from io import BytesIO
+
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponse, JsonResponse
@@ -166,25 +165,7 @@ def user_logout(request):
     return redirect('Market:index')
 
 
-@csrf_exempt
-def get_captcha(request):
-    """
-    AJAX представление для получения новой DOOM игровой CAPTCHA
-    """
-    if request.method == 'GET':
-        doom_captcha = DoomCaptcha()
-        img_io, session_id = doom_captcha.get_captcha()
-        
-        # Конвертируем изображение в base64
-        img_base64 = base64.b64encode(img_io.getvalue()).decode('utf-8')
-        
-        return JsonResponse({
-            'image': f'data:image/png;base64,{img_base64}',
-            'session_id': session_id,
-            'instructions': 'Нажмите на 3 монстрів, щоб довести, що ви людина!'
-        })
-    
-    return JsonResponse({'error': 'Метод не підтримується'}, status=405)
+
 
 
 @login_required

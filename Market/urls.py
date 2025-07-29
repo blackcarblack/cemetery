@@ -16,6 +16,5 @@ urlpatterns = [
     path('logout/', auth_views.user_logout, name='logout'),
     path('profile/', auth_views.profile, name='profile'),
     
-    # AJAX для CAPTCHA
-    path('get-captcha/', auth_views.get_captcha, name='get_captcha'),
+
 ]
