@@ -2,6 +2,9 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 from django.contrib.auth.models import User, AbstractUser
+from django.db.models import CharField, DateField, IntegerField, BooleanField, FloatField, Model, EmailField, TextField, \
+    ImageField, DateTimeField, ForeignKey, CASCADE
+from django.utils import timezone
 
 class CustomUser(AbstractUser):
     age = models.IntegerField(null=True, blank=True)  # Removed trailing comma
@@ -32,4 +35,3 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-

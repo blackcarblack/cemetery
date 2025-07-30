@@ -12,3 +12,6 @@ def about(request):
 
 def team(request):
     return render(request, "Market/team.html")
+
+def menu(request):
+    return render(request, "Market/menu.html")
