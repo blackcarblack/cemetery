@@ -1,17 +1,18 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
         <a class="navbar-brand" href="{% url 'Market:index' %}">
             <i class="fas fa-utensils"></i> Смакота
         </a>
-        
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
                        href="{% url 'Market:index' %}">
                         <i class="fas fa-home"></i> Головна
                     </a>
@@ -23,26 +24,39 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
                        href="{% url 'Market:about' %}">
                         <i class="fas fa-info-circle"></i> Про нас
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'team_info' %}active{% endif %}" 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'team_info' %}active{% endif %}"
                        href="{% url 'Market:team' %}">
                         <i class="fas fa-users"></i> Команда
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'site_info' %}active{% endif %}" 
+                    <a class="nav-link {% if request.resolver_match.url_name == 'site_info' %}active{% endif %}"
                        href="#">
                         <i class="fas fa-laptop"></i> Про сайт
                     </a>
                 </li>
             </ul>
-            
+
             <ul class="navbar-nav">
+                <!-- Кнопка кошика -->
+                <li class="nav-item">
+                    <a href="{% url 'Market:view_cart' %}" class="nav-link position-relative">
+                        🛒 Кошик
+                        {% if request.session.cart %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ request.session.cart|length }}
+                                <span class="visually-hidden">товарів у кошику</span>
+                            </span>
+                        {% endif %}
+                    </a>
+                </li>
+
                 {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">

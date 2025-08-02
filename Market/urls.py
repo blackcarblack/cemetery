@@ -10,6 +10,8 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('team/', views.team, name='team'),
     path('menu/', views.menu, name='menu'),
+    path('add-to-cart/', views.add_to_cart, name='add_to_cart'),
+    path('cart/', views.view_cart, name='view_cart'),
 
     # Аутентификация
     path('login/', auth_views.user_login, name='login'),

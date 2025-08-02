@@ -1,0 +1,56 @@
+{% extends 'Market/base.html' %}
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center mb-4">🛒 Ваш кошик</h2>
+    <hr>
+
+    {% if cart_items %}
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Назва</th>
+                            <th scope="col" class="text-end">Ціна</th>
+                            <th scope="col" class="text-center">Кількість</th>
+                            <th scope="col" class="text-end">Сума</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>
+                                <i class="fas fa-utensils text-muted me-2"></i>
+                                **{{ item.name }}**
+                            </td>
+                            <td class="text-end">{{ item.price|floatformat:2 }} грн</td>
+                            <td class="text-center">{{ item.quantity }}</td>
+                            <td class="text-end">{{ item.total|floatformat:2 }} грн</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-8 text-end">
+                <div class="p-3 bg-light rounded shadow-sm">
+                    <h4 class="mb-0">Загальна сума: **{{ total_price|floatformat:2 }} грн**</h4>
+                </div>
+                <button class="btn btn-success btn-lg mt-3">
+                    Оформити замовлення <i class="fas fa-chevron-right ms-2"></i>
+                </button>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            <i class="fas fa-info-circle me-2"></i> Ваш кошик порожній.
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'Market:menu' %}" class="btn btn-primary btn-lg">
+                Перейти до меню <i class="fas fa-utensils ms-2"></i>
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
