@@ -1,9 +1,11 @@
 
-from django.forms import CharField, ModelForm, PasswordInput, ValidationError, Textarea, TextInput, NumberInput, HiddenInput
+from django.forms import CharField, ModelForm, PasswordInput, ValidationError, Textarea, TextInput, NumberInput, \
+    HiddenInput
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 
-
+from .models import Product
+from django import forms
 User = get_user_model()
 
 
@@ -54,3 +56,7 @@ class LoginForm(AuthenticationForm):
         self.fields['username'].label = 'Ім\'я користувача'
         self.fields['password'].label = 'Пароль'
 
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'price', 'description','image']

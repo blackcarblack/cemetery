@@ -17,7 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from Market import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('market/', include("Market.urls"))
+    path('market/', include("Market.urls")),
+    path('add/', views.add_product, name='add_product'),
+    path('', views.index, name='index'),
 ]

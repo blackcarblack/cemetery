@@ -1,8 +1,9 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-import json
 
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
 
+from .forms import ProductForm
+from .models import Product
 
 def index(request):
     return render(request, "Market/index.html")
@@ -19,49 +20,59 @@ def menu(request):
     return render(request, "Market/menu.html")
 
 
-def add_to_cart(request):
+def is_admin(user):
+    return user.is_superuser
+
+def shop(request):
+    products = Product.objects.all()
+    paginator = Paginator(products, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    response = render(request, 'Market/menu.html', {
+        'page_obj': page_obj,
+    })
+    return response
+
+def index(request):
+    return render(request, 'Market/index.html')
+def add_product(request):
     if request.method == 'POST':
-        product_id = request.POST.get('product_id')
-        product_name = request.POST.get('product_name')
-        product_price = float(request.POST.get('product_price'))
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+        description = request.POST.get('description')
+        image = request.FILES.get('image')  # <-- нове
 
-        cart = request.session.get('cart', {})
+        product = Product(name=name, price=price, description=description, image=image)
+        product.save()
 
-        if product_id in cart:
-            cart[product_id]['quantity'] += 1
-        else:
-            cart[product_id] = {
-                'name': product_name,
-                'price': product_price,
-                'quantity': 1
-            }
+        return redirect('/')
+    return render(request, 'Market/product.html')
 
-        request.session['cart'] = cart
-        return JsonResponse({'success': True, 'cart': cart})
+def delete_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        return redirect('index')
+    return render(request, 'Market/confirm_delete.html', {'product': product})
 
+def edit_product(request, pk=None):
+    if pk:
+        product = get_object_or_404(Product, pk=pk)
+    else:
+        product = None
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('index')
+    else:
+        form = ProductForm()
+        product.delete()
+    return render(request, 'Market/product.html', {'form': form, 'product': product})
 
 def view_cart(request):
-    cart = request.session.get('cart', {})
-    cart_items = []
-    total_price = 0
+    pass
 
-    for product_id, item in cart.items():
-        quantity = item['quantity']
-        price = item['price']
-        # Важливо: використовуємо ключі 'name' та 'price' безпосередньо з item
-        item_name = item['name']
-        item_total = quantity * price
-        total_price += item_total
-
-        cart_items.append({
-            'name': item_name,
-            'price': price,
-            'quantity': quantity,
-            'total': item_total
-        })
-
-    return render(request, 'Market/cart.html', {
-        'cart_items': cart_items,
-        'total_price': total_price
-    })
-
+def add_to_cart(request):
+    pass

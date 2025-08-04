@@ -5,7 +5,8 @@ from django.contrib.auth.models import User, AbstractUser
 from django.db.models import CharField, DateField, IntegerField, BooleanField, FloatField, Model, EmailField, TextField, \
     ImageField, DateTimeField, ForeignKey, CASCADE
 from django.utils import timezone
-
+from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 class CustomUser(AbstractUser):
     age = models.IntegerField(null=True, blank=True)  # Removed trailing comma
     country = models.CharField(max_length=100, blank=True)  # Added blank=True
@@ -35,3 +36,21 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
+    description = models.TextField()
+    image = models.ImageField(upload_to='product_images/', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+class Cart(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} ({self.quantity})"
