@@ -65,4 +65,3 @@ def view_cart(request):
         'total_price': total_price
     })
 
-#f[f[f[[
