@@ -64,3 +64,5 @@ def view_cart(request):
         'cart_items': cart_items,
         'total_price': total_price
     })
+
+#f[f[f[[
