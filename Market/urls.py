@@ -23,4 +23,8 @@ urlpatterns = [
     path('add/', views.add_product, name='add_product'),
     path('edit/<int:pk>/', views.edit_product, name='edit_product'),
     path('admin/', admin.site.urls),
+    path('my-cart/', views.view_cart, name='user_cart'),
+    path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('cart/add_one/<int:product_id>/', views.add_one_to_cart, name='add_one_to_cart'),
+    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
 ]

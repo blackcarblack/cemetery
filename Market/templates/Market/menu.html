@@ -19,12 +19,14 @@
                         <h5 class="card-title">{{ product.name }} - ${{ product.price }}</h5>
                         <p class="card-text">{{ product.description }}</p>
                     </div>
-                    {% if request.user.is_superuser %}
+                    <form method="post" action="{% url 'add_to_cart' product.id %}">
+                        {% csrf_token %}
+                         <button type="submit" class="btn btn-outline-success btn-sm mt-2">Додати в кошик</button>
+                     </form>
                     <div class="card-footer text-end">
                         <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-primary">Редагувати</a>
                         <a href="{% url 'delete_product' product.pk %}" class="btn btn-sm btn-danger">Видалити</a>
                     </div>
-                    {% endif %}
                 </div>
             </div>
         {% endfor %}

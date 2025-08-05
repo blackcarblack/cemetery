@@ -16,12 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from django.conf.urls.static import static
 from Market import views
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('market/', include("Market.urls")),
+    path('delete/<int:pk>/', views.delete_product, name='delete_product'),
     path('add/', views.add_product, name='add_product'),
+    path('edit/<int:pk>/', views.edit_product, name='edit_product'),
     path('', views.index, name='index'),
-]
+    path('my-cart/', views.view_cart, name='user_cart'),
+    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('cart/add_one/<int:product_id>/', views.add_one_to_cart, name='add_one_to_cart'),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
