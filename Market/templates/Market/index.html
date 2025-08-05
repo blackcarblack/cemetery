@@ -1,46 +1,96 @@
-{% extends 'Market/base.html' %}
-
-{% block title %}Головна - Ресторан "Смакота"{% endblock %}
-
-{% block content %}
-<!-- Hero Section -->
-<section class="hero-section text-center py-5">
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
-        <h1 class="display-3 mb-4">
-            <i class="fas fa-utensils"></i> Ресторан "Смакота"
-        </h1>
-        <a href="/market/menu" class="btn btn-warning btn-lg">
-            <i class="fas fa-utensils"></i> Подивитись меню
+        <a class="navbar-brand" href="{% url 'Market:index' %}">
+            <i class="fas fa-utensils"></i> Смакота
         </a>
-    </div>
-</section>
 
-<!-- Basic Contact Info -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-map-marker-alt fa-2x text-warning mb-3"></i>
-                    <h5>Адреса</h5>
-                    <p>вул. Хрещатик, 1<br>Київ, Україна</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-phone fa-2x text-warning mb-3"></i>
-                    <h5>Телефон</h5>
-                    <p>+380 44 123 45 67</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="text-center">
-                    <i class="fas fa-clock fa-2x text-warning mb-3"></i>
-                    <h5>Режим роботи</h5>
-                    <p>Пн-Нд: 10:00 - 23:00</p>
-                </div>
-            </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                       href="{% url 'Market:index' %}">
+                        <i class="fas fa-home"></i> Головна
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'dishes' %}active{% endif %}"
+                       href="/market/menu">
+                        <i class="fas fa-utensils"></i> Страви
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+                       href="{% url 'Market:about' %}">
+                        <i class="fas fa-info-circle"></i> Про нас
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'team_info' %}active{% endif %}"
+                       href="{% url 'Market:team' %}">
+                        <i class="fas fa-users"></i> Команда
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'site_info' %}active{% endif %}"
+                       href="#">
+                        <i class="fas fa-laptop"></i> Про сайт
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <!-- Кнопка кошика -->
+                <li class="nav-item">
+                    <a href="{% url 'Market:view_cart' %}" class="nav-link position-relative">
+                        🛒 Кошик
+                        {% if request.session.cart %}
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {{ request.session.cart|length }}
+                                <span class="visually-hidden">товарів у кошику</span>
+                            </span>
+                        {% endif %}
+                    </a>
+                </li>
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'Market:profile' %}">
+                                <i class="fas fa-user-circle"></i> Профіль
+                            </a></li>
+                            {% if user.is_staff %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/admin/">
+                                    <i class="fas fa-tachometer-alt"></i> Адмін панель
+                                </a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'Market:logout' %}">
+                                <i class="fas fa-sign-out-alt"></i> Вихід
+                            </a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Market:login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Вхід
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Market:register' %}">
+                            <i class="fas fa-user-plus"></i> Реєстрація
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
         </div>
     </div>
-</section>
-{% endblock %}
+</nav>
