@@ -39,10 +39,19 @@ class CustomUser(AbstractUser):
 
 
 class Product(models.Model):
+    SECTION_CHOICES = [
+        ('pizza', 'Pizza'),
+        ('sushi', 'Sushi'),
+        ('salad', 'Salad'),
+        ('drink', 'Drink'),
+        ('desert', 'Desert'),
+    ]
+
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     description = models.TextField()
     image = models.ImageField(upload_to='product_images/', blank=True, null=True)
+    section = models.CharField(max_length=20, choices=SECTION_CHOICES, default='other')
 
     def __str__(self):
         return self.name

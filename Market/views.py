@@ -40,9 +40,16 @@ def add_product(request):
         name = request.POST.get('name')
         price = request.POST.get('price')
         description = request.POST.get('description')
-        image = request.FILES.get('image')  # <-- нове
+        image = request.FILES.get('image')
+        section = request.POST.get('section')  # <-- додано
 
-        product = Product(name=name, price=price, description=description, image=image)
+        product = Product(
+            name=name,
+            price=price,
+            description=description,
+            image=image,
+            section=section  # <-- додано
+        )
         product.save()
 
         return redirect('/')

@@ -59,4 +59,4 @@ class LoginForm(AuthenticationForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'price', 'description','image']
+        fields = ['name', 'price', 'description','image','section']
