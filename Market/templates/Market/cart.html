@@ -1,0 +1,152 @@
+
+<h2>Ваш кошик</h2>
+<table class="table">
+    <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f2f8f5;
+      padding: 20px;
+    }
+
+    h2::before {
+      content: "🛒 ";
+      font-size: 1.2em;
+    }
+
+    h2 {
+      text-align: left;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th {
+      background-color: #3498db;
+      color: #fff;
+      padding: 12px;
+      text-align: center;
+    }
+
+    td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+      color: #2c3e50;
+    }
+
+    tr:hover {
+      background-color: #ecf0f1;
+    }
+
+    form button {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    form button:hover {
+      background-color: #c0392b;
+    }
+
+    .total-row {
+      font-weight: bold;
+      background-color: #2ecc71;
+      color: white;
+      font-size: 16px;
+    }
+      .menu-sum-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      .menu-link {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      .menu-link:hover {
+        background-color: #1d6fa5;
+      }
+
+      .total-sum {
+        font-size: 18px;
+        font-weight: bold;
+        color: black;
+      }
+      form button {
+        background-color: #3498db; /* синій */
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      form button:hover {
+        background-color: #1d6fa5; /* темно-синій при наведенні */
+      }
+  </style>
+  <thead>
+    <tr>
+      <th>Назва товару</th>
+      <th>Ціна за одиницю</th>
+      <th>Кількість</th>
+      <th>Сума</th>
+      <th>Видалення</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in cart_items %}
+    <tr>
+      <td>{{ item.product.name }}</td>
+      <td>{{ item.product.price }}</td>
+      <td>
+        <form method="post" action="{% url 'remove_from_cart' item.product.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit">-</button>
+        </form>
+
+        {{ item.quantity }}
+
+        <form method="post" action="{% url 'add_one_to_cart' item.product.id %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit">+</button>
+        </form>
+      </td>
+      <td>{{ item.total_price }}</td>
+      <td>
+        <form method="post" action="{% url 'remove_from_cart' item.product.id %}">
+          {% csrf_token %}
+          <button type="submit">-1</button>
+        </form>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="4">Кошик порожній</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="menu-sum-row">
+  <a class="menu-link" href="{% url 'index' %}">На головне меню</a>
+  <div class="total-sum">Загальна сума: {{ total_sum }}</div>
+</div>
