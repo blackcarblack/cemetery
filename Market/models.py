@@ -7,6 +7,9 @@ from django.db.models import CharField, DateField, IntegerField, BooleanField, F
 from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MinValueValidator, MaxValueValidator
+
+from PIL import Image
+import os
 class CustomUser(AbstractUser):
     age = models.IntegerField(null=True, blank=True)  # Removed trailing comma
     country = models.CharField(max_length=100, blank=True)  # Added blank=True
@@ -55,6 +58,20 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.image:
+            img_path = self.image.path
+            img = Image.open(img_path)
+
+            # Зміна розміру
+            max_size = (300, 300)
+            img.thumbnail(max_size)
+
+            # Перезаписати файл
+            img.save(img_path)
 
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
