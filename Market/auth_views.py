@@ -93,17 +93,16 @@ def user_register(request):
 
 def validate_doom_captcha(doom_completed, doom_session, request):
     """
-    Валидация аутентичной DOOM 1993 CAPTCHA
+    Упрощенная валидация DOOM CAPTCHA (исправлено для работы с iframe)
     """
-    import time
     from django.core.cache import cache
     
     # Базовые проверки
     if not doom_completed or not doom_session:
         return False
     
-    # Проверяем длину сессии (защита от простых атак)
-    if len(doom_session) < 10:
+    # Проверяем длину сессии (базовая защита)
+    if len(doom_session) < 5:
         return False
     
     # Проверяем, что сессия не была использована ранее (защита от повторного использования)
@@ -111,32 +110,8 @@ def validate_doom_captcha(doom_completed, doom_session, request):
     if cache.get(cache_key):
         return False
     
-    # Проверяем IP адрес для базовой защиты
-    user_ip = get_client_ip(request)
-    session_ip_key = f'doom_session_ip_{doom_session}'
-    cached_ip = cache.get(session_ip_key)
-    
-    if cached_ip and cached_ip != user_ip:
-        return False
-    
-    # Сохраняем IP сессии (если еще не сохранен)
-    if not cached_ip:
-        cache.set(session_ip_key, user_ip, 600)  # 10 минут
-    
-    # Отмечаем сессию как использованную
-    cache.set(cache_key, True, 3600)  # 1 час
-    
-    # Дополнительная проверка: минимальное время (защита от ботов)
-    session_start_key = f'doom_session_start_{doom_session}'
-    start_time = cache.get(session_start_key)
-    if start_time:
-        elapsed_time = time.time() - start_time
-        if elapsed_time < 15:  # Минимум 15 секунд на прохождение
-            return False
-    else:
-        # Если время начала не найдено, сохраняем текущее время
-        cache.set(session_start_key, time.time(), 600)
-        return False  # Первая попытка - отклоняем
+    # Отмечаем сессию как использованную (на 1 час)
+    cache.set(cache_key, True, 3600)
     
     return True
 
