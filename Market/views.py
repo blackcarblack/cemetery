@@ -1,4 +1,4 @@
-
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 
@@ -78,36 +78,35 @@ def edit_product(request, pk):
     return render(request, "Market/edit.html", {'form': form})
 
 
+@login_required
 def add_to_cart(request, product_id):
-    cart = request.session.get('cart', {})
-    cart[str(product_id)] = cart.get(str(product_id), 0) + 1
-    request.session['cart'] = cart
-    return redirect('Market:view_cart')
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    product = get_object_or_404(Product, id=product_id)
+    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
+
+    if not created:
+        cart_item.quantity += 1
+        cart_item.save()
+
+    return redirect('index')
 
 
 
+@login_required
 def view_cart(request):
-    if request.user.is_authenticated:
-        cart_items = Cart.objects.filter(user=request.user)
-        for item in cart_items:
-            item.total_price = item.product.price * item.quantity
-        total_sum = sum(item.total_price for item in cart_items)
-    else:
-        cart_data = request.session.get('cart', {})
-        cart_items = []
-        total_sum = 0
-        for product_id, quantity in cart_data.items():
-            try:
-                product = Product.objects.get(pk=product_id)
-                total_price = product.price * quantity
-                total_sum += total_price
-                cart_items.append({
-                    'product': product,
-                    'quantity': quantity,
-                    'total_price': total_price
-                })
-            except Product.DoesNotExist:
-                continue
+    cart_items = Cart.objects.filter(user=request.user)
+
+    for item in cart_items:
+        item.total_price = item.product.price * item.quantity
+
+    total_sum = sum(item.total_price for item in cart_items)
+
+    return render(request, 'Market/cart.html', {
+        'cart_items': cart_items,
+        'total_sum': total_sum
+    })
 
     return render(request, 'Market/cart.html', {
         'cart_items': cart_items,
@@ -115,45 +114,34 @@ def view_cart(request):
     })
 
 
+@login_required
 def remove_from_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    cart_item = Cart.objects.filter(user=request.user, product=product).first()
 
-    if request.user.is_authenticated:
-        cart_item = Cart.objects.filter(user=request.user, product=product).first()
-        if cart_item:
-            if cart_item.quantity > 1:
-                cart_item.quantity -= 1
-                cart_item.save()
-            else:
-                cart_item.delete()
-    else:
-        cart = request.session.get('cart', {})
-        if str(product_id) in cart:
-            if cart[str(product_id)] > 1:
-                cart[str(product_id)] -= 1
-            else:
-                del cart[str(product_id)]
-            request.session['cart'] = cart
+    if cart_item:
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()
+        else:
+            cart_item.delete()
 
-    return redirect('Market:view_cart')
+    return redirect('user_cart')
+
 
 
 from django.shortcuts import redirect, get_object_or_404
 from .models import Product, Cart
 
+@login_required
 def add_one_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
 
-    if request.user.is_authenticated:
-        cart_item, created = Cart.objects.get_or_create(user=request.user, product=product)
-        cart_item.quantity += 1
-        cart_item.save()
-    else:
-        cart = request.session.get('cart', {})
-        cart[str(product_id)] = cart.get(str(product_id), 0) + 1
-        request.session['cart'] = cart
+    cart_item.quantity += 1
+    cart_item.save()
 
-    return redirect('Market:view_cart')
+    return redirect('user_cart')
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
