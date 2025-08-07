@@ -1,6 +1,6 @@
 
 from django.forms import CharField, ModelForm, PasswordInput, ValidationError, Textarea, TextInput, NumberInput, \
-    HiddenInput
+    HiddenInput, FileInput, Select
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -64,7 +64,14 @@ class LoginForm(AuthenticationForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'price', 'description','image','section']
+        fields = ['name', 'price', 'description', 'image', 'section']
+        widgets = {
+            'name': TextInput(attrs={'class': 'form-control'}),
+            'price': NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'description': Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'image': FileInput(attrs={'class': 'form-control'}),
+            'section': Select(attrs={'class': 'form-control'}),
+        }
 
 class CommentForm(forms.ModelForm):
     captcha = CaptchaField()

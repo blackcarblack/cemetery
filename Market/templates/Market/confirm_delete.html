@@ -12,7 +12,7 @@
         <form method="post" class="d-flex justify-content-between align-items-center mt-4">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Так, видалити</button>
-            <a href="{% url 'index' %}" class="btn btn-secondary">Скасувати</a>
+            <a href="{% url 'Market:menu' %}" class="btn btn-secondary">Скасувати</a>
         </form>
     </div>
 </body>

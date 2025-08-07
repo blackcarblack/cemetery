@@ -13,28 +13,32 @@
     </nav>
 
 
-    <!-- Продукти по секціях -->
     {% for section in sections %}
-        <h2 id="{{ section }}" class="mt-5 text-capitalize">{{ section }}</h2>
-        <div class="row row-cols-1 row-cols-md-2 g-4">
+        <h2 id="{{ section }}" class="mt-5 text-capitalize text-center fw-bold">{{ section }}</h2>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {% for product in products %}
                 {% if product.section == section %}
                     <div class="col">
-                        <div class="card h-100" onclick="location.href='{% url 'Market:product_detail' product.id %}'" style="cursor: pointer;">
+                        <div class="card h-100 shadow-sm border-0 product-card" onclick="location.href='{% url 'Market:product_detail' product.id %}'" style="cursor: pointer;">
                             {% if product.image %}
-                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 500px; object-fit: cover;">
+                                <div class="card-img-top-container">
+                                    <img src="{{ product.image.url }}" class="card-img-top product-image" alt="{{ product.name }}">
+                                </div>
                             {% endif %}
-                            <div class="card-body">
-                                <h5 class="card-title">{{ product.name }} - ₴{{ product.price }}</h5>
-                                <p class="card-text">{{ product.description }}</p>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold text-truncate">{{ product.name }}</h5>
+                                <p class="card-text text-muted mb-auto">{{ product.description|truncatechars:100 }}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <h4 class="text-success mb-0">₴{{ product.price }}</h4>
+                                    <form method="post" action="{% url 'add_to_cart' product.id %}" onClick="event.stopPropagation();">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">Додати в кошик</button>
+                                    </form>
+                                </div>
                             </div>
-                            <form method="post" action="{% url 'add_to_cart' product.id %}" onClick="event.stopPropagation();">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-success btn-sm mt-2">Додати в кошик</button>
-                            </form>
-                            <div class="card-footer text-end">
-                                <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-primary">Редагувати</a>
-                                <a href="{% url 'delete_product' product.pk %}" class="btn btn-sm btn-danger">Видалити</a>
+                            <div class="card-footer bg-light border-top-0 d-flex justify-content-end gap-2">
+                                <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-outline-primary">Редагувати</a>
+                                <a href="{% url 'delete_product' product.pk %}" class="btn btn-sm btn-outline-danger">Видалити</a>
                             </div>
                         </div>
                     </div>
@@ -43,9 +47,34 @@
         </div>
     {% endfor %}
 
-    <!-- Кнопка додати продукт -->
-    <div class="text-center mt-5">
-        <a href="{% url 'add_product' %}" class="btn btn-success btn-lg">Додати новий продукт</a>
+    <div class="text-center mt-5 mb-5">
+        <a href="{% url 'add_product' %}" class="btn btn-success btn-lg px-5 shadow">Додати новий продукт</a>
     </div>
 </section>
+
+<style>
+    .product-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .card-img-top-container {
+        height: 200px;
+        overflow: hidden;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .product-image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .card-title {
+        font-size: 1.25rem;
+    }
+</style>
 {% endblock %}

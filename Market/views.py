@@ -62,20 +62,21 @@ def delete_product(request, pk):
         return redirect('Market:menu')
     return render(request, 'Market/confirm_delete.html', {'product': product})
 
-def edit_product(request, pk=None):
-    if pk:
-        product = get_object_or_404(Product, pk=pk)
-    else:
-        product = None
 
-    if request.method == 'POST':
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('index')
-    else:
-        form = ProductForm()
-    return render(request, 'Market/product.html', {'form': form, 'product': product})
+def edit_product(request, pk):
+    product = Product.objects.get(id=pk)
+
+    if request.method == "GET":
+        form = ProductForm(instance=product)
+        return render(request, "Market/edit.html", {'form': form})
+
+    form = ProductForm(request.POST, request.FILES, instance=product)
+    if form.is_valid():
+        form.save()
+        return redirect('Market:menu')
+
+    return render(request, "Market/edit.html", {'form': form})
+
 
 def add_to_cart(request, product_id):
     cart = request.session.get('cart', {})
