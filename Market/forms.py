@@ -4,8 +4,13 @@ from django.forms import CharField, ModelForm, PasswordInput, ValidationError, T
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Product
+from .models import Product, Comment
 from django import forms
+from captcha.fields import CaptchaField
+
+
+
+
 User = get_user_model()
 
 
@@ -60,3 +65,14 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ['name', 'price', 'description','image','section']
+
+class CommentForm(forms.ModelForm):
+    captcha = CaptchaField()
+
+    class Meta:
+        model = Comment
+        fields = ['name', 'text', 'captcha']
+        labels = {
+            'name': "Ім'я",
+            'text': 'Коментар'
+        }

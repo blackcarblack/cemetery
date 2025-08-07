@@ -43,18 +43,18 @@ class CustomUser(AbstractUser):
 
 class Product(models.Model):
     SECTION_CHOICES = [
-        ('pizza', 'Pizza'),
-        ('sushi', 'Sushi'),
-        ('salad', 'Salad'),
-        ('drink', 'Drink'),
-        ('desert', 'Desert'),
+        ('Піца', 'Піца'),
+        ('Суші', 'Суші'),
+        ('Салати', 'Салати'),
+        ('Напої', 'Напої'),
+        ('Десерти', 'Десерти'),
     ]
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     description = models.TextField()
-    image = models.ImageField(upload_to='product_images/', blank=True, null=True)
-    section = models.CharField(max_length=20, choices=SECTION_CHOICES, default='other')
+    image = models.ImageField(upload_to='products/')
+    section = models.CharField(max_length=20, choices=SECTION_CHOICES, default='pizza')  # <-- додано
 
     def __str__(self):
         return self.name
@@ -80,3 +80,9 @@ class Cart(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name} ({self.quantity})"
+
+class Comment(Model):
+    product = ForeignKey(Product, on_delete=CASCADE, related_name='comments')
+    name = CharField(max_length=100)
+    text = TextField()
+    created_at = DateTimeField(auto_now_add=True)

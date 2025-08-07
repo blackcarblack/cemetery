@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from . import auth_views
 from django.contrib import admin
@@ -12,6 +12,8 @@ urlpatterns = [
     path('menu/', views.shop, name='menu'),
     path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.view_cart, name='view_cart'),
+    path('product/<int:product_id>/', views.product_detail, name='product_detail'),
+    path('captcha/', include('captcha.urls')),
 
     # ��������������
     path('login/', auth_views.user_login, name='login'),
