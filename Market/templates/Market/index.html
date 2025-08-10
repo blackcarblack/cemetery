@@ -4,14 +4,30 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="hero-section text-center py-5">
+<section class="hero-section py-5">
     <div class="container">
-        <h1 class="display-3 mb-4">
-            <i class="fas fa-utensils"></i> Ресторан "Смакота"
-        </h1>
-        <a href="/market/menu" class="btn btn-warning btn-lg">
-            <i class="fas fa-utensils"></i> Подивитись меню
-        </a>
+        <div class="row align-items-center">
+            <div class="col-md-8 text-center text-md-start">
+                <h1 class="display-3 mb-4">
+                    <i class="fas fa-utensils"></i> Ресторан "Смакота"
+                </h1>
+                <a href="/market/menu" class="btn btn-warning btn-lg">
+                    <i class="fas fa-utensils"></i> Подивитись меню
+                </a>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="bonus-button-container" style="display: inline-block; position: relative;">
+                    <div id="bonus-model3d-container" style="width: 200px; height: 150px; cursor: pointer; transition: transform 0.3s ease;">
+                        <canvas id="bonus-model3d-canvas"></canvas>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <div class="mt-2" style="background-color: #ffc107; color: #000; padding: 8px 16px; border-radius: 20px; display: inline-block; font-weight: bold; font-size: 18px;">
+                            <i class="fas fa-coins"></i> {{ user.bonus_points }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -44,26 +60,9 @@
     </div>
 </section>
 
-<!-- 3D Model Section -->
-<section class="py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h2 class="mb-4">
-                    <i class="fas fa-cube"></i> Інтерактивна 3D модель
-                </h2>
-                <div id="model3d-container" style="width: 100%; height: 400px; border: 2px solid #ffc107; border-radius: 10px; cursor: pointer;">
-                    <canvas id="model3d-canvas"></canvas>
-                </div>
-                <p class="mt-3 text-muted">
-                    <i class="fas fa-mouse-pointer"></i> Натисніть для переходу на іншу сторінку 
-                    <span class="mx-2">|</span>
-                    <i class="fas fa-hand-rock"></i> Утримуйте та перетягуйте для обертання
-                </p>
-            </div>
-        </div>
-    </div>
-</section>
+
+
+
 
 <!-- Three.js Scripts -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -71,160 +70,140 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
 <script>
-// 3D Model Setup
-let scene, camera, renderer, model, controls;
-let isMouseDown = false;
-let autoRotate = true;
+// Bonus Button 3D Model Setup
+let bonusScene, bonusCamera, bonusRenderer, bonusModel;
+let bonusAutoRotate = true;
 
-function init3DModel() {
-    const container = document.getElementById('model3d-container');
-    const canvas = document.getElementById('model3d-canvas');
+function initBonusButton3D() {
+    const bonusContainer = document.getElementById('bonus-model3d-container');
+    const bonusCanvas = document.getElementById('bonus-model3d-canvas');
+    
+    if (!bonusContainer || !bonusCanvas) return;
     
     // Scene setup
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf0f0f0); // Lighter background
+    bonusScene = new THREE.Scene();
+    bonusScene.background = null; // Прозорий фон для зливання з сайтом
     
     // Camera setup
-    camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-    camera.position.set(0, 0, 6);
+    bonusCamera = new THREE.PerspectiveCamera(75, bonusContainer.offsetWidth / bonusContainer.offsetHeight, 0.1, 1000);
+    bonusCamera.position.set(0, 0, 4);
     
     // Renderer setup
-    renderer = new THREE.WebGLRenderer({ 
-        canvas: canvas, 
+    bonusRenderer = new THREE.WebGLRenderer({ 
+        canvas: bonusCanvas, 
         antialias: true,
         alpha: true
     });
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
-    renderer.physicallyCorrectLights = true;
-    renderer.outputEncoding = THREE.sRGBEncoding;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 2.5;
-    renderer.shadowMap.enabled = false; // Disable shadows for brighter appearance
+    bonusRenderer.setSize(bonusContainer.offsetWidth, bonusContainer.offsetHeight);
+    bonusRenderer.physicallyCorrectLights = true;
+    bonusRenderer.outputEncoding = THREE.sRGBEncoding;
+    bonusRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+    bonusRenderer.toneMappingExposure = 2.5;
     
-    // Lighting - Maximum brightness setup
-    const ambientLight = new THREE.AmbientLight(0xffffff, 8);
-    scene.add(ambientLight);
+    // Додаємо OrbitControls для інтерактивності
+    window.bonusControls = new THREE.OrbitControls(bonusCamera, bonusCanvas);
+    window.bonusControls.enableDamping = true;
+    window.bonusControls.dampingFactor = 0.05;
+    window.bonusControls.screenSpacePanning = false;
+    window.bonusControls.minDistance = 2;
+    window.bonusControls.maxDistance = 8;
+    window.bonusControls.enablePan = false; // Вимкнути переміщення
+    window.bonusControls.enableZoom = false; // Вимкнути zoom
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
-    directionalLight.position.set(5, 5, 5);
-    scene.add(directionalLight);
+    // Обмежити обертання тільки по горизонталі (тільки azimuth, не polar)
+    window.bonusControls.minPolarAngle = Math.PI / 2; // 90 градусів
+    window.bonusControls.maxPolarAngle = Math.PI / 2; // 90 градусів
+    // Це зафіксує вертикальний кут і дозволить тільки горизонтальне обертання
     
-    // Additional lighting for maximum brightness from all directions
-    const directionalLight2 = new THREE.DirectionalLight(0xffffff, 4);
-    directionalLight2.position.set(-5, 5, -5);
-    scene.add(directionalLight2);
+    // Lighting setup - Maximum brightness
+    const bonusAmbientLight = new THREE.AmbientLight(0xffffff, 10);
+    bonusScene.add(bonusAmbientLight);
     
-    const directionalLight3 = new THREE.DirectionalLight(0xffffff, 3);
-    directionalLight3.position.set(0, -5, 5);
-    scene.add(directionalLight3);
+    const bonusDirectionalLight = new THREE.DirectionalLight(0xffffff, 8);
+    bonusDirectionalLight.position.set(3, 3, 3);
+    bonusScene.add(bonusDirectionalLight);
     
-    const directionalLight4 = new THREE.DirectionalLight(0xffffff, 3);
-    directionalLight4.position.set(0, 5, -5);
-    scene.add(directionalLight4);
+    const bonusDirectionalLight2 = new THREE.DirectionalLight(0xffffff, 6);
+    bonusDirectionalLight2.position.set(-3, 3, -3);
+    bonusScene.add(bonusDirectionalLight2);
     
-    const directionalLight5 = new THREE.DirectionalLight(0xffffff, 2);
-    directionalLight5.position.set(5, 0, 0);
-    scene.add(directionalLight5);
+    // Additional lighting for maximum brightness
+    const bonusDirectionalLight3 = new THREE.DirectionalLight(0xffffff, 5);
+    bonusDirectionalLight3.position.set(0, -3, 3);
+    bonusScene.add(bonusDirectionalLight3);
     
-    const directionalLight6 = new THREE.DirectionalLight(0xffffff, 2);
-    directionalLight6.position.set(-5, 0, 0);
-    scene.add(directionalLight6);
+    const bonusDirectionalLight4 = new THREE.DirectionalLight(0xffffff, 4);
+    bonusDirectionalLight4.position.set(0, 3, -3);
+    bonusScene.add(bonusDirectionalLight4);
     
-    // Controls setup
-    controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.1;
-    controls.enabled = false; // Initially disabled for auto-rotation
-    
-    // Load 3D model
-    const loader = new THREE.GLTFLoader();
-    loader.load('{% load static %}{% static "market/models/Black_car_coin.glb" %}', function(gltf) {
-        model = gltf.scene;
+    // Load 3D model for bonus button
+    const bonusLoader = new THREE.GLTFLoader();
+    bonusLoader.load('{% load static %}{% static "market/models/Black_car_coin.glb" %}', function(gltf) {
+        bonusModel = gltf.scene;
         
-        // Scale and position the model
-        model.scale.set(2, 2, 2);
-        model.position.set(0, -0.3, 0);
+        // Scale and position the model (smaller for button)
+        bonusModel.scale.set(1.5, 1.5, 1.5);
+        bonusModel.position.set(0, -0.2, 0);
         
-        // Simple material setup - let model use its original materials
-        model.traverse(function(node) {
+        // Робимо модель горизонтальною
+        bonusModel.rotation.x = 0; // Горизонтальне положення
+        
+        bonusModel.traverse(function(node) {
             if (node.isMesh) {
                 node.castShadow = true;
                 node.receiveShadow = true;
                 
-                // Minimal material adjustments
                 if (node.material) {
-                    // Just ensure materials work with lighting
                     node.material.needsUpdate = true;
                 }
             }
         });
         
-        scene.add(model);
-        console.log('3D model loaded successfully:', model);
-    }, 
-    function(progress) {
-        console.log('Loading progress:', (progress.loaded / progress.total * 100) + '%');
-    },
-    function(error) {
-        console.error('Error loading 3D model:', error);
+        bonusScene.add(bonusModel);
     });
     
-    // Mouse events
-    canvas.addEventListener('mousedown', onMouseDown);
-    canvas.addEventListener('mouseup', onMouseUp);
-    canvas.addEventListener('mouseleave', onMouseUp);
-    
-    // Click event for navigation
-    canvas.addEventListener('click', function(event) {
-        if (!isMouseDown) {
-            // Navigate to another page (you can change this URL)
-            window.location.href = '#'; // Replace with actual URL
-        }
+    // Click event for navigation to bonus shop
+    bonusContainer.addEventListener('click', function() {
+        // Navigate to bonus shop
+        window.location.href = '/market/bonus-shop/';
     });
     
-    // Resize handler
-    window.addEventListener('resize', onWindowResize);
+    // Hover effects
+    bonusContainer.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05)';
+        this.style.boxShadow = '0 4px 15px rgba(255, 193, 7, 0.4)';
+    });
     
-    // Start animation loop
-    animate();
-}
-
-function onMouseDown(event) {
-    isMouseDown = true;
-    autoRotate = false;
-    controls.enabled = true;
-}
-
-function onMouseUp(event) {
-    setTimeout(() => {
-        isMouseDown = false;
-        autoRotate = true;
-        controls.enabled = false;
-    }, 100);
-}
-
-function onWindowResize() {
-    const container = document.getElementById('model3d-container');
-    camera.aspect = container.offsetWidth / container.offsetHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
-}
-
-function animate() {
-    requestAnimationFrame(animate);
+    bonusContainer.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+        this.style.boxShadow = 'none';
+    });
     
-    // Auto rotation when not being dragged
-    if (autoRotate && model) {
-        model.rotation.y += 0.01;
+    // Start animation loop for bonus button
+    animateBonusButton();
+}
+
+function animateBonusButton() {
+    requestAnimationFrame(animateBonusButton);
+    
+    // Оновлюємо controls для плавності інтерактивності
+    if (window.bonusControls) {
+        window.bonusControls.update();
     }
     
-    controls.update();
-    renderer.render(scene, camera);
+    // Auto rotation for bonus button - постійне обертання монети
+    if (bonusAutoRotate && bonusModel) {
+        bonusModel.rotation.y -= 0.01; // Плавне обертання монети в іншу сторону
+    }
+    
+    if (bonusRenderer && bonusScene && bonusCamera) {
+        bonusRenderer.render(bonusScene, bonusCamera);
+    }
 }
 
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', function() {
-    init3DModel();
+    initBonusButton3D();
 });
 </script>
 

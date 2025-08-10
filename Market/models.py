@@ -11,15 +11,14 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from PIL import Image
 import os
 class CustomUser(AbstractUser):
-    age = models.IntegerField(null=True, blank=True)  # Removed trailing comma
-    country = models.CharField(max_length=100, blank=True)  # Added blank=True
-    address = models.TextField(blank=True)  # Added blank=True
+    age = models.IntegerField(null=True, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    address = models.TextField(blank=True)
+    bonus_points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Bonus points system
 
     class Meta:
-        # Add related_name to avoid conflicts
         db_table = 'market_customuser'
 
-    # Override the groups and user_permissions to avoid conflicts
     groups = models.ManyToManyField(
         'auth.Group',
         verbose_name='groups',
@@ -66,23 +65,48 @@ class Product(models.Model):
             img_path = self.image.path
             img = Image.open(img_path)
 
-            # Зміна розміру
             max_size = (300, 300)
             img.thumbnail(max_size)
 
-            # Перезаписати файл
             img.save(img_path)
 
 class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-
+    is_bonus_purchase = models.BooleanField(default=False)
     def __str__(self):
-        return f"{self.user.username} - {self.product.name} ({self.quantity})"
+        bonus_text = " (бонусна)" if self.is_bonus_purchase else ""
+        return f"{self.user.username} - {self.product.name} ({self.quantity}){bonus_text}"
 
 class Comment(Model):
     product = ForeignKey(Product, on_delete=CASCADE, related_name='comments')
     name = CharField(max_length=100)
     text = TextField()
     created_at = DateTimeField(auto_now_add=True)
+
+class BonusProduct(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='bonus_info')
+    bonus_price = models.DecimalField(max_digits=8, decimal_places=2, help_text='Ціна в бонусних балах')
+    is_available = models.BooleanField(default=True, help_text='Доступний для бонусної покупки')
+
+    def __str__(self):
+        return f"{self.product.name} - {self.bonus_price} балів"
+
+    class Meta:
+        verbose_name = "Бонусний товар"
+        verbose_name_plural = "Бонусні товари"
+
+class Purchase(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    bonus_points_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    paid_with_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    is_bonus_purchase = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        bonus_text = " (бонусна)" if self.is_bonus_purchase else ""
+        return f"{self.user.username} - {self.product.name} x{self.quantity}{bonus_text}"
