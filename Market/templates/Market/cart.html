@@ -116,10 +116,10 @@
     </tr>
   </thead>
   <tbody>
-    {% for item in regular_items %}
+    {% for item in cart_items %}
     <tr>
-      <td>{{ item.product.name }} 💰</td>
-      <td>₴{{ item.product.price }}</td>
+      <td>{{ item.product.name }}</td>
+      <td>{{ item.product.price }}</td>
       <td>
         <form method="post" action="{% url 'remove_from_cart' item.product.id %}" style="display:inline;">
           {% csrf_token %}
@@ -133,73 +133,20 @@
           <button type="submit">+</button>
         </form>
       </td>
-      <td>₴{{ item.total_price }}</td>
+      <td>{{ item.total_price }}</td>
       <td>
         <form method="post" action="{% url 'remove_from_cart' item.product.id %}">
           {% csrf_token %}
-          <button type="submit">Видалити</button>
+          <button type="submit">-1</button>
         </form>
       </td>
     </tr>
+    {% empty %}
+    <tr><td colspan="4">Кошик порожній</td></tr>
     {% endfor %}
-    
-    {% for item in bonus_items %}
-    <tr style="background-color: #fff3cd;">
-      <td>{{ item.product.name }} 🎁 (бонусний)</td>
-      <td>{{ item.product.price }} балів</td>
-      <td>
-        <form method="post" action="{% url 'Market:remove_bonus_from_cart' item.product.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit">-</button>
-        </form>
-
-        {{ item.quantity }}
-
-        <form method="post" action="{% url 'Market:add_bonus_to_cart' item.product.id %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit">+</button>
-        </form>
-      </td>
-      <td>{{ item.total_price }} балів</td>
-      <td>
-        <form method="post" action="{% url 'Market:remove_bonus_from_cart' item.product.id %}">
-          {% csrf_token %}
-          <button type="submit">Видалити</button>
-        </form>
-      </td>
-    </tr>
-    {% endfor %}
-    
-    {% if not regular_items and not bonus_items %}
-    <tr><td colspan="5">Кошик порожній</td></tr>
-    {% endif %}
   </tbody>
 </table>
 <div class="menu-sum-row">
   <a class="menu-link" href="{% url 'index' %}">На головне меню</a>
-  <div class="total-sum">
-    {% if regular_total %}
-      Сума грошей: ₴{{ regular_total }}<br>
-    {% endif %}
-    {% if bonus_total %}
-      Сума бонусів: {{ bonus_total }} балів<br>
-    {% endif %}
-    {% if not regular_total and not bonus_total %}
-      Кошик порожній
-    {% endif %}
-  </div>
+  <div class="total-sum">Загальна сума: {{ total_sum }}</div>
 </div>
-
-{% if cart_items %}
-<div style="text-align: center; margin-top: 20px;">
-  <form method="post" action="{% url 'Market:checkout' %}" style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" style="background-color: #27ae60; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background-color 0.3s ease;" onmouseover="this.style.backgroundColor='#1e8449'" onmouseout="this.style.backgroundColor='#27ae60'">
-      🛒 Оформити замовлення (+ 1% бонусів)
-    </button>
-  </form>
-  <div style="margin-top: 10px; color: #7f8c8d; font-size: 14px;">
-    <i>💰 За це замовлення ви отримаєте {{ bonus_points|floatformat:2 }} бонусних балів</i>
-  </div>
-</div>
-{% endif %}
