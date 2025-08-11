@@ -14,7 +14,7 @@ class CustomUser(AbstractUser):
     age = models.IntegerField(null=True, blank=True)
     country = models.CharField(max_length=100, blank=True)
     address = models.TextField(blank=True)
-    bonus_points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Bonus points system
+    bonus_points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     class Meta:
         db_table = 'market_customuser'
@@ -76,8 +76,12 @@ class Cart(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     is_bonus_purchase = models.BooleanField(default=False)
     def __str__(self):
-        bonus_text = " (бонусна)" if self.is_bonus_purchase else ""
-        return f"{self.user.username} - {self.product.name} ({self.quantity}){bonus_text}"
+        if self.is_bonus_purchase:
+            purchase_type = " (бонусна покупка)"
+        else:
+            purchase_type = "(звичайна покупка)"
+        
+        return f"{self.user.username} - {self.product.name} ({self.quantity}){purchase_type}"
 
 class Comment(Model):
     product = ForeignKey(Product, on_delete=CASCADE, related_name='comments')
@@ -88,7 +92,7 @@ class Comment(Model):
 class BonusProduct(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='bonus_info')
     bonus_price = models.DecimalField(max_digits=8, decimal_places=2, help_text='Ціна в бонусних балах')
-    is_available = models.BooleanField(default=True, help_text='Доступний для бонусної покупки')
+    is_available = models.BooleanField(default=True, help_text='Доступний для покупки')
 
     def __str__(self):
         return f"{self.product.name} - {self.bonus_price} балів"
@@ -96,6 +100,7 @@ class BonusProduct(models.Model):
     class Meta:
         verbose_name = "Бонусний товар"
         verbose_name_plural = "Бонусні товари"
+        ordering = ['product__name']              
 
 class Purchase(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -108,5 +113,9 @@ class Purchase(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        bonus_text = " (бонусна)" if self.is_bonus_purchase else ""
-        return f"{self.user.username} - {self.product.name} x{self.quantity}{bonus_text}"
+        if self.is_bonus_purchase:
+            purchase_type = " (бонусна покупка)"
+        else:
+            purchase_type = "(звичайна покупка)"
+        
+        return f"{self.user.username} - {self.product.name} x{self.quantity}{purchase_type}"
