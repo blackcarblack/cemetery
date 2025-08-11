@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 
-from .forms import ProductForm, CommentForm
+from .forms import ProductForm, CommentForm, CheckoutForm
 from .models import Product, Cart, Purchase, BonusProduct
 from django.urls import reverse
 from decimal import Decimal
@@ -92,7 +92,7 @@ def add_to_cart(request, product_id):
         cart_item.quantity += 1
         cart_item.save()
 
-    return redirect('index')
+    return redirect('Market:menu')
 
 
 
@@ -342,3 +342,6 @@ def remove_bonus_from_cart(request, product_id):
 def buy_with_bonus(request, product_id):
     return add_bonus_to_cart(request, product_id)
 
+def checkoutt(request):
+    form = CheckoutForm()
+    return render(request, "Market/checkout.html", {form: "form"})

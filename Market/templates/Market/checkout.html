@@ -169,30 +169,14 @@
     </form>
 </div>
 
-<select id="citySelect" class="form-select mb-3">
-    <option value="kharkiv">Харків</option>
-    <option value="kyiv">Київ</option>
-    <option value="lviv">Львів</option>
-    <!-- Добавь другие города при необходимости -->
-</select>
 
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
 
-<!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
-<!-- Leaflet.markercluster CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
-
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- Leaflet.markercluster JS -->
-<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-<!-- Leaflet & MarkerCluster -->
 <script>
-    const map = L.map('map').setView([49.9935, 36.2304], 13); // Харків (дефолт)
+    const map = L.map('map').setView([50.4501, 30.5234], 13); // Киев
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
@@ -200,46 +184,50 @@
     const apiKey = '6132f5ce533bfd6c1a926c3b58ea7b30';
     const typeRef = 'f9316480-5f2d-425d-bc2c-ac7cd29decf0'; // Поштомати
 
-    const cityRefs = {
-        'kyiv': { ref: '8ae2dfc6-4b33-11e4-ab6d-005056801329', name: 'Київ', lat: 50.4501, lng: 30.5234 },
-        'kharkiv': { ref: '8d5a980d-391c-11dd-90d9-001a92567626', name: 'Харків', lat: 49.9935, lng: 36.2304 },
-        'lviv': { ref: '8d5a980d-391c-11dd-90d9-001a92567626', name: 'Львів', lat: 49.8397, lng: 24.0297 }, // замените ref на корректный
-        // Добавь сюда другие города по необходимости
-    };
+    // CityRef: Киев, Харьков, Львов
+    const cities = [
+        '8d5a980d-391c-11dd-90d9-001a92567626', // Киев
+    ];
 
     const markers = L.markerClusterGroup();
     map.addLayer(markers);
-    let allOffices = [];
 
-    const citySelect = document.getElementById('citySelect');
+    let allOffices = []; // кеш всех точек
 
-    function loadWarehouses(cityKey) {
-        const city = cityRefs[cityKey];
-        if (!city) return;
+    // При клике на адрес — скролл к карте
+    const addressField = document.getElementById('id_address');
+    addressField.removeAttribute('readonly');
+    addressField.addEventListener('click', () => {
+        document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
 
-        map.setView([city.lat, city.lng], 13);
-        fetch('https://api.novaposhta.ua/v2.0/json/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                apiKey: apiKey,
-                modelName: "Address",
-                calledMethod: "getWarehouses",
-                methodProperties: {
-                    CityRef: city.ref,
-                    TypeOfWarehouseRef: typeRef
-                }
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                allOffices = data.data;
+    function loadWarehousesOnce() {
+        const requests = cities.map(cityRef =>
+            fetch('https://api.novaposhta.ua/v2.0/json/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    apiKey: apiKey,
+                    modelName: "Address",
+                    calledMethod: "getWarehouses",
+                    methodProperties: {
+                        CityRef: cityRef,
+                        TypeOfWarehouseRef: typeRef
+                    }
+                })
+            }).then(res => res.json())
+        );
+
+        Promise.all(requests)
+            .then(responses => {
+                responses.forEach(data => {
+                    if (data.success) {
+                        allOffices = allOffices.concat(data.data);
+                    }
+                });
                 updateMapMarkers();
-            } else {
-                alert("Не вдалося завантажити поштомати: " + data.errors.join(', '));
-            }
-        });
+            })
+            .catch(err => alert("Помилка завантаження поштоматів: " + err));
     }
 
     function updateMapMarkers() {
@@ -270,10 +258,9 @@
     }
 
     map.on('moveend', updateMapMarkers);
-    citySelect.addEventListener('change', () => loadWarehouses(citySelect.value));
-
-    loadWarehouses('kharkiv'); // Дефолт — Харків
+    loadWarehousesOnce();
 </script>
+
 
 
 </body>
