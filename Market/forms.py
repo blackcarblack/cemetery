@@ -83,3 +83,15 @@ class CommentForm(forms.ModelForm):
             'name': "Ім'я",
             'text': 'Коментар'
         }
+
+class CheckoutForm(forms.Form):
+    name = forms.CharField(label="Ім’я", max_length=100)
+    surname = forms.CharField(label="Прізвище", max_length=100)
+    phone = forms.CharField(label="Телефон", max_length=20)
+    email = forms.EmailField(label="Email")
+    address = forms.CharField(label="Адреса доставки", widget=forms.Textarea)
+    card_number = forms.CharField(label="Номер картки", max_length=19)
+    expiration_date = forms.CharField(label="Термін дії (MM/YY)", max_length=5)
+    cvv = forms.CharField(label="CVV", max_length=4)
+    latitude = forms.FloatField(widget=forms.HiddenInput(), required=False)
+    longitude = forms.FloatField(widget=forms.HiddenInput(), required=False)

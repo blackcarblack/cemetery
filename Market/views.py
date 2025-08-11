@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
 
-from .forms import ProductForm, CommentForm
+from .forms import ProductForm, CommentForm, CheckoutForm
 from .models import Product, Cart
 from django.urls import reverse
 
@@ -90,7 +90,7 @@ def add_to_cart(request, product_id):
         cart_item.quantity += 1
         cart_item.save()
 
-    return redirect('index')
+    return redirect('Market:menu')
 
 
 
@@ -108,10 +108,7 @@ def view_cart(request):
         'total_sum': total_sum
     })
 
-    return render(request, 'Market/cart.html', {
-        'cart_items': cart_items,
-        'total_sum': total_sum
-    })
+    return render(request, 'Market/cart.html', {'cart_items': cart_items, 'total_sum': total_sum})
 
 
 @login_required
@@ -171,3 +168,6 @@ def product_detail(request, product_id):
         'captcha_error': captcha_error,
     })
 
+def checkout(request):
+    form = CheckoutForm()
+    return render(request, 'Market/checkout.html', {'form': form})

@@ -1,5 +1,18 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+
+<style>
+    /* dropdown - поверх белой панели */
+    .dropdown-menu {
+        position: absolute;
+        z-index: 1100;
+    }
+    .navbar {
+        z-index: 1050;
+        position: relative;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
         <a class="navbar-brand" href="{% url 'Market:index' %}">
             <i class="fas fa-utensils"></i> Смакота

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Оформлення замовлення</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-o9N1j7kR1bC4I+VcGH9v9gnd+9b+1b0tniyI5FjrfC4="
+      crossorigin=""
+    />
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #5D5D5D;
+            --background-color: #F8F9FA;
+            --card-background: #FFFFFF;
+            --border-color: #E0E0E0;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --text-color: #333333;
+        }
+
+        body {
+            background-color: var(--background-color);
+            padding: 40px;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-color);
+        }
+
+        .checkout-container {
+            max-width: 900px;
+            margin: auto;
+            background-color: var(--card-background);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        h2.main-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+        }
+
+        .section-title {
+            color: var(--secondary-color);
+            font-weight: 600;
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(76, 175, 80, 0.25);
+        }
+
+        #map {
+            height: 500px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            padding: 12px 25px;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #43A047;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .payment-info {
+            background-color: #F1F8E9;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="checkout-container">
+    <h2 class="main-title">🛍️ Оформлення замовлення</h2>
+    <form method="post">
+        {% csrf_token %}
+
+        <h3 class="section-title">Контактна інформація та доставка</h3>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_name" class="form-label">Ім'я</label>
+                <input type="text" name="name" id="id_name" class="form-control" placeholder="Іван">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_phone" class="form-label">Номер телефону</label>
+                <input type="text" name="phone" id="id_phone" class="form-control" placeholder="+380 (__) ___-__-__">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="id_email" class="form-label">Електронна пошта</label>
+            <input type="email" name="email" id="id_email" class="form-control" placeholder="email@example.com">
+        </div>
+        <div class="mb-3">
+            <label for="id_address" class="form-label">Адреса доставки</label>
+            <textarea name="address" id="id_address" class="form-control" rows="3" readonly placeholder="Оберіть поштомат на карті"></textarea>
+        </div>
+
+        <input type="hidden" name="latitude" id="id_latitude">
+        <input type="hidden" name="longitude" id="id_longitude">
+
+        <h3 class="section-title">Оберіть поштомат на карті</h3>
+        <div id="map"></div>
+        <p class="text-muted text-center">Натисніть на поштомат, щоб вибрати його як адресу доставки.</p>
+
+        <div class="payment-info">
+            <h3 class="section-title" style="border: none;">Оплата карткою</h3>
+            <div class="row">
+                <div class="col-md-8">
+                    <label for="card_number" class="form-label">Номер картки</label>
+                    <input type="text" class="form-control" id="card_number" placeholder="0000 0000 0000 0000">
+                </div>
+                <div class="col-md-4">
+                    <label for="expiry_date" class="form-label">Термін дії</label>
+                    <input type="text" class="form-control" id="expiry_date" placeholder="MM/YY">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-8">
+                    <label for="card_holder" class="form-label">Ім'я власника картки</label>
+                    <input type="text" class="form-control" id="card_holder" placeholder="Іван Іванов">
+                </div>
+                <div class="col-md-4">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="password" class="form-control" id="cvv" placeholder="***">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-4">Підтвердити замовлення</button>
+    </form>
+</div>
+
+<select id="citySelect" class="form-select mb-3">
+    <option value="kharkiv">Харків</option>
+    <option value="kyiv">Київ</option>
+    <option value="lviv">Львів</option>
+    <!-- Добавь другие города при необходимости -->
+</select>
+
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- Leaflet.markercluster CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<!-- Leaflet.markercluster JS -->
+<script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+<!-- Leaflet & MarkerCluster -->
+<script>
+    const map = L.map('map').setView([49.9935, 36.2304], 13); // Харків (дефолт)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const apiKey = '6132f5ce533bfd6c1a926c3b58ea7b30';
+    const typeRef = 'f9316480-5f2d-425d-bc2c-ac7cd29decf0'; // Поштомати
+
+    const cityRefs = {
+        'kyiv': { ref: '8ae2dfc6-4b33-11e4-ab6d-005056801329', name: 'Київ', lat: 50.4501, lng: 30.5234 },
+        'kharkiv': { ref: '8d5a980d-391c-11dd-90d9-001a92567626', name: 'Харків', lat: 49.9935, lng: 36.2304 },
+        'lviv': { ref: '8d5a980d-391c-11dd-90d9-001a92567626', name: 'Львів', lat: 49.8397, lng: 24.0297 }, // замените ref на корректный
+        // Добавь сюда другие города по необходимости
+    };
+
+    const markers = L.markerClusterGroup();
+    map.addLayer(markers);
+    let allOffices = [];
+
+    const citySelect = document.getElementById('citySelect');
+
+    function loadWarehouses(cityKey) {
+        const city = cityRefs[cityKey];
+        if (!city) return;
+
+        map.setView([city.lat, city.lng], 13);
+        fetch('https://api.novaposhta.ua/v2.0/json/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                apiKey: apiKey,
+                modelName: "Address",
+                calledMethod: "getWarehouses",
+                methodProperties: {
+                    CityRef: city.ref,
+                    TypeOfWarehouseRef: typeRef
+                }
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                allOffices = data.data;
+                updateMapMarkers();
+            } else {
+                alert("Не вдалося завантажити поштомати: " + data.errors.join(', '));
+            }
+        });
+    }
+
+    function updateMapMarkers() {
+        const bounds = map.getBounds();
+        markers.clearLayers();
+
+        const visible = allOffices.filter(office => {
+            const lat = parseFloat(office.Latitude);
+            const lng = parseFloat(office.Longitude);
+            return bounds.contains([lat, lng]);
+        });
+
+        visible.forEach(office => {
+            const lat = parseFloat(office.Latitude);
+            const lng = parseFloat(office.Longitude);
+            const address = office.Description;
+
+            const marker = L.marker([lat, lng])
+                .bindPopup(`<strong>${address}</strong><br>${office.ShortAddress}`)
+                .on('click', function () {
+                    document.getElementById('id_latitude').value = lat;
+                    document.getElementById('id_longitude').value = lng;
+                    document.getElementById('id_address').value = `${address}, ${office.ShortAddress}`;
+                });
+
+            markers.addLayer(marker);
+        });
+    }
+
+    map.on('moveend', updateMapMarkers);
+    citySelect.addEventListener('change', () => loadWarehouses(citySelect.value));
+
+    loadWarehouses('kharkiv'); // Дефолт — Харків
+</script>
+
+
+</body>
+</html>

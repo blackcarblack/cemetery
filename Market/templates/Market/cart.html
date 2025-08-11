@@ -1,7 +1,6 @@
-
 <h2>Ваш кошик</h2>
 <table class="table">
-    <style>
+  <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f2f8f5;
@@ -44,7 +43,7 @@
       background-color: #ecf0f1;
     }
 
-    form button {
+    .form-btn {
       background-color: #e74c3c;
       color: white;
       border: none;
@@ -55,7 +54,19 @@
       transition: background-color 0.3s ease;
     }
 
-    form button:hover {
+    .form-btn.add {
+      background-color: #2ecc71; /* Green */
+    }
+
+    .form-btn.add:hover {
+      background-color: #27ae60;
+    }
+
+    .form-btn.remove {
+      background-color: #e74c3c; /* Red */
+    }
+
+    .form-btn.remove:hover {
       background-color: #c0392b;
     }
 
@@ -65,46 +76,58 @@
       color: white;
       font-size: 16px;
     }
-      .menu-sum-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-      }
 
-      .menu-link {
-        background-color: #3498db;
+    .menu-sum-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .menu-link {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .menu-link:hover {
+      background-color: #1d6fa5;
+    }
+
+    .total-sum {
+      font-size: 18px;
+      font-weight: bold;
+      color: black;
+    }
+    .checkout-btn-container {
+        text-align: right;
+        margin-top: 20px;
+    }
+    .checkout-btn {
+        background-color: #2ecc71; /* Яскраво-зелений */
         color: white;
-        padding: 10px 16px;
+        padding: 12px 24px;
         border-radius: 6px;
         text-decoration: none;
         font-weight: bold;
-        transition: background-color 0.3s ease;
-      }
+        font-size: 1.1em;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-      .menu-link:hover {
-        background-color: #1d6fa5;
-      }
+    .checkout-btn:hover {
+        background-color: #27ae60; /* Темно-зелений при наведенні */
+        transform: translateY(-2px);
+    }
 
-      .total-sum {
-        font-size: 18px;
-        font-weight: bold;
-        color: black;
-      }
-      form button {
-        background-color: #3498db; /* синій */
-        color: white;
-        border: none;
-        padding: 6px 12px;
-        border-radius: 5px;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-      }
-
-      form button:hover {
-        background-color: #1d6fa5; /* темно-синій при наведенні */
-      }
+    .checkout-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
   </style>
   <thead>
     <tr>
@@ -123,30 +146,33 @@
       <td>
         <form method="post" action="{% url 'remove_from_cart' item.product.id %}" style="display:inline;">
           {% csrf_token %}
-          <button type="submit">-</button>
+          <button type="submit" class="form-btn remove">-</button>
         </form>
-
         {{ item.quantity }}
-
         <form method="post" action="{% url 'add_one_to_cart' item.product.id %}" style="display:inline;">
           {% csrf_token %}
-          <button type="submit">+</button>
+          <button type="submit" class="form-btn add">+</button>
         </form>
       </td>
       <td>{{ item.total_price }}</td>
       <td>
         <form method="post" action="{% url 'remove_from_cart' item.product.id %}">
           {% csrf_token %}
-          <button type="submit">-1</button>
+          <button type="submit" class="form-btn remove">-1</button>
         </form>
       </td>
     </tr>
     {% empty %}
-    <tr><td colspan="4">Кошик порожній</td></tr>
+    <tr>
+      <td colspan="5">Кошик порожній</td>
+    </tr>
     {% endfor %}
   </tbody>
 </table>
 <div class="menu-sum-row">
-  <a class="menu-link" href="{% url 'index' %}">На головне меню</a>
+  <a class="menu-link" href="{% url 'Market:menu' %}">На головне меню</a>
   <div class="total-sum">Загальна сума: {{ total_sum }}</div>
+</div>
+<div class="checkout-btn-container">
+    <a class="checkout-btn" href="{% url 'Market:checkout' %}">Оформити замовлення</a>
 </div>

@@ -6,7 +6,7 @@
 {% block content %}
 <section class="container mt-4">
 
-    <nav class="nav sticky-top justify-content-center py-2 bg-white shadow-sm">
+    <nav class="nav sticky-top justify-content-center py-2 bg-white shadow-sm" style="z-index: 100;">
         {% for section in sections %}
             <a href="#{{ section }}" class="btn btn-outline-primary mx-1 text-capitalize">{{ section }}</a>
         {% endfor %}
