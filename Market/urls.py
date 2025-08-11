@@ -5,7 +5,6 @@ from django.contrib import admin
 app_name = 'Market'
 
 urlpatterns = [
-    # �������� ��������
     path('', views.index, name='index'),
     path('about/', views.about, name='about'),
     path('team/', views.team, name='team'),
@@ -17,7 +16,6 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
 
 
-    # ��������������
     path('login/', auth_views.user_login, name='login'),
     path('register/', auth_views.user_register, name='register'),
     path('logout/', auth_views.user_logout, name='logout'),
@@ -31,4 +29,11 @@ urlpatterns = [
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
     path('cart/add_one/<int:product_id>/', views.add_one_to_cart, name='add_one_to_cart'),
     path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
+    
+    # Bonus shop routes
+    path('bonus-shop/', views.bonus_shop, name='bonus_shop'),
+    path('buy-with-bonus/<int:product_id>/', views.buy_with_bonus, name='buy_with_bonus'),
+    path('add-bonus-to-cart/<int:product_id>/', views.add_bonus_to_cart, name='add_bonus_to_cart'),
+    path('remove-bonus-from-cart/<int:product_id>/', views.remove_bonus_from_cart, name='remove_bonus_from_cart'),
+    path('checkout/', views.checkout, name='checkout'),
 ]

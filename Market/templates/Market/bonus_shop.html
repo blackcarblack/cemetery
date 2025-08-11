@@ -1,0 +1,105 @@
+{% extends 'Market/base.html' %}
+
+{% block title %}Бонусний магазин - Ресторан "Смакота"{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<section class="py-4 bg-warning">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-0">
+                    <i class="fas fa-coins"></i> Бонусний магазин
+                </h1>
+                <p class="mb-0 text-muted">Купуйте продукти за бонусні бали</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="bg-dark text-white p-3 rounded">
+                    <h5 class="mb-0">
+                        <i class="fas fa-wallet"></i> Ваші бонуси: 
+                        <span class="text-warning">{{ user_bonus_points }} балів</span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="py-5">
+    <div class="container">
+        {% if products %}
+            <div class="row">
+                {% for product in products %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 {% if user_bonus_points < product.price %}border-secondary{% else %}border-success{% endif %}">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-info">{{ product.section }}</span>
+                                    <h6 class="mb-0 text-warning">
+                                        <i class="fas fa-coins"></i> {{ product.price }} балів
+                                    </h6>
+                                </div>
+                                
+                                {% if user_bonus_points >= product.price %}
+                                    <form method="post" action="{% url 'Market:add_bonus_to_cart' product.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success w-100">
+                                            <i class="fas fa-shopping-cart"></i> Додати в кошик (бонуси)
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <button class="btn btn-secondary w-100" disabled>
+                                        <i class="fas fa-ban"></i> Недостатньо балів
+                                    </button>
+                                    <small class="text-muted">
+                                        Потрібно ще {{ product.price|floatformat:2|add:user_bonus_points|add:"-"|add:user_bonus_points }} балів
+                                    </small>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <h3>Немає доступних продуктів</h3>
+                <p class="text-muted">Поки що немає продуктів у бонусному магазині</p>
+                <a href="{% url 'Market:menu' %}" class="btn btn-warning">
+                    <i class="fas fa-utensils"></i> Перейти до звичайного меню
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Info Section -->
+<section class="py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Back to menu button -->
+<section class="py-3 text-center">
+    <div class="container">
+        <a href="{% url 'Market:menu' %}" class="btn btn-outline-warning">
+            <i class="fas fa-arrow-left"></i> Повернутися до меню
+        </a>
+        <a href="{% url 'Market:index' %}" class="btn btn-outline-primary">
+            <i class="fas fa-home"></i> На головну
+        </a>
+    </div>
+</section>
+{% endblock %}
