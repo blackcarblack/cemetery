@@ -101,26 +101,26 @@ def view_cart(request):
     cart_items = Cart.objects.filter(user=request.user)
 
     for item in cart_items:
-        if item.is_bonus_purchase:
+        if item.is_bonus_purchase:  # Обробляємо бонусні товари
             try:
-                bonus_price = item.product.bonus_info.bonus_price
+                bonus_price = item.product.bonus_info.bonus_price  # Отримуємо бонусну ціну
             except:
-                bonus_price = item.product.price
-            item.total_price = bonus_price * item.quantity
-            item.bonus_price = bonus_price
-            item.is_bonus = True
+                bonus_price = item.product.price  # Якщо немає бонусної ціни, використовуємо звичайну
+            item.total_price = bonus_price * item.quantity  # Розраховуємо загальну вартість
+            item.bonus_price = bonus_price  # Зберігаємо бонусну ціну для відображення
+            item.is_bonus = True  # Позначаємо як бонусний товар
         else:
-            item.total_price = item.product.price * item.quantity
-            item.is_bonus = False
+            item.total_price = item.product.price * item.quantity  # Розраховуємо звичайну вартість
+            item.is_bonus = False  # Позначаємо як звичайний товар
 
-    regular_items = [item for item in cart_items if not item.is_bonus_purchase]
-    bonus_items = [item for item in cart_items if item.is_bonus_purchase]
+    regular_items = [item for item in cart_items if not item.is_bonus_purchase]  # Звичайні товари
+    bonus_items = [item for item in cart_items if item.is_bonus_purchase]  # Бонусні товари
     
-    regular_total = sum(item.total_price for item in regular_items)
-    bonus_total = sum(item.total_price for item in bonus_items)
+    regular_total = sum(item.total_price for item in regular_items)  # Загальна сума звичайних товарів
+    bonus_total = sum(item.total_price for item in bonus_items)  # Загальна сума бонусних товарів
     
     from decimal import Decimal
-    bonus_points = regular_total * Decimal('0.25') if regular_total else 0
+    bonus_points = regular_total * Decimal('0.25') if regular_total else 0  # Розраховуємо бонуси що будуть нараховані
 
     return render(request, 'Market/cart.html', {
         'cart_items': cart_items,
@@ -199,61 +199,61 @@ def checkout(request):
         messages.error(request, 'Ваш кошик порожній')
         return redirect('user_cart')
     
-    regular_items = cart_items.filter(is_bonus_purchase=False)
-    bonus_items = cart_items.filter(is_bonus_purchase=True)
+    regular_items = cart_items.filter(is_bonus_purchase=False)  # Звичайні товари для покупки
+    bonus_items = cart_items.filter(is_bonus_purchase=True)  # Бонусні товари для покупки
     
-    total_bonus_cost = Decimal('0.00')
-    total_earned_bonus = Decimal('0.00')
+    total_bonus_cost = Decimal('0.00')  # Загальна вартість бонусних товарів
+    total_earned_bonus = Decimal('0.00')  # Загальна кількість нарахованих бонусів
 
-    for item in bonus_items:
+    for item in bonus_items:  # Обробляємо кожен бонусний товар
         try:
-            bonus_price = item.product.bonus_info.bonus_price
+            bonus_price = item.product.bonus_info.bonus_price  # Отримуємо бонусну ціну
         except:
-            bonus_price = item.product.price
+            bonus_price = item.product.price  # Використовуємо звичайну ціну якщо немає бонусної
 
-        item_cost = bonus_price * item.quantity
-        total_bonus_cost += item_cost
+        item_cost = bonus_price * item.quantity  # Розраховуємо вартість товару
+        total_bonus_cost += item_cost  # Додаємо до загальної суми
 
-        if request.user.bonus_points < item_cost:
+        if request.user.bonus_points < item_cost:  # Перевіряємо достатність балів
             messages.error(request, f'Недостатньо бонусних балів для покупки {item.product.name}')
             return redirect('user_cart')
 
-    if total_bonus_cost > 0:
-        request.user.bonus_points -= total_bonus_cost
+    if total_bonus_cost > 0:  # Якщо є бонусні покупки
+        request.user.bonus_points -= total_bonus_cost  # Списуємо бонусні бали з рахунку
 
-    for item in regular_items:
-        bonus_earned = (item.product.price * item.quantity) * Decimal('0.01')  # 1% від покупки
-        total_earned_bonus += bonus_earned
+    for item in regular_items:  # Обробляємо звичайні товари
+        bonus_earned = (item.product.price * item.quantity) * Decimal('0.01')  # Нараховуємо 1% бонусів від покупки
+        total_earned_bonus += bonus_earned  # Додаємо до загальної суми нарахованих бонусів
 
-    request.user.bonus_points += total_earned_bonus
+    request.user.bonus_points += total_earned_bonus  # Додаємо нараховані бонуси до рахунку
 
     for item in cart_items:
-        if item.is_bonus_purchase:
+        if item.is_bonus_purchase:  # Створюємо запис бонусної покупки
             try:
-                bonus_price = item.product.bonus_info.bonus_price
+                bonus_price = item.product.bonus_info.bonus_price  # Отримуємо бонусну ціну
             except:
-                bonus_price = item.product.price
-            Purchase.objects.create(
+                bonus_price = item.product.price  # Використовуємо звичайну ціну
+            Purchase.objects.create(  # Створюємо запис покупки
                 user=request.user,
                 product=item.product,
                 quantity=item.quantity,
-                total_price=bonus_price * item.quantity,
-                paid_with_bonus=bonus_price * item.quantity,
-                is_bonus_purchase=True
+                total_price=bonus_price * item.quantity,  # Загальна вартість
+                paid_with_bonus=bonus_price * item.quantity,  # Сума сплачена бонусами
+                is_bonus_purchase=True  # Позначаємо як бонусну покупку
             )
-        else:
-            bonus_earned = (item.product.price * item.quantity) * Decimal('0.01')
-            Purchase.objects.create(
+        else:  # Створюємо запис звичайної покупки
+            bonus_earned = (item.product.price * item.quantity) * Decimal('0.01')  # Розраховуємо нараховані бонуси
+            Purchase.objects.create(  # Створюємо запис покупки
                 user=request.user,
                 product=item.product,
                 quantity=item.quantity,
-                total_price=item.product.price * item.quantity,
-                bonus_points_earned=bonus_earned,
-                is_bonus_purchase=False
+                total_price=item.product.price * item.quantity,  # Загальна вартість
+                bonus_points_earned=bonus_earned,  # Нараховані бонуси
+                is_bonus_purchase=False  # Позначаємо як звичайну покупку
             )
     
-    request.user.save()
-    cart_items.delete()
+    request.user.save()  # Зберігаємо зміни в балансі користувача
+    cart_items.delete()  # Очищуємо кошик після покупки
     
     if total_bonus_cost > 0 and total_earned_bonus > 0:
         messages.success(request, f'Покупка успішна! Витрачено {total_bonus_cost} бонусних балів і нараховано {total_earned_bonus} нових балів')
@@ -269,65 +269,70 @@ def checkout(request):
 @login_required 
 def bonus_shop(request):
     products = Product.objects.all()
-    user_bonus_points = request.user.bonus_points
-    
+
     for product in products:
-        try:
+        if hasattr(product, 'bonus_info'):
             product.bonus_price = product.bonus_info.bonus_price
             product.is_bonus_available = product.bonus_info.is_available
-        except:
+        else:
             product.bonus_price = product.price
             product.is_bonus_available = True
 
     return render(request, 'Market/bonus_shop.html', {
         'products': products,
-        'user_bonus_points': user_bonus_points,
+        'user_bonus_points': request.user.bonus_points,  # Поточний баланс бонусних балів користувача
     })
 
 @login_required
 def add_bonus_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    """Додавання товару в кошик для бонусної покупки"""
+    product = get_object_or_404(Product, id=product_id)  # Отримуємо товар або помилку 404
     
-    try:
-        bonus_price = product.bonus_info.bonus_price
-    except:
-        bonus_price = product.price
+    if hasattr(product, 'bonus_info'):  # Перевіряємо наявність бонусної інформації
+        bonus_price = product.bonus_info.bonus_price  # Використовуємо бонусну ціну
+    else:
+        bonus_price = product.price  # Використовуємо звичайну ціну
 
-    if request.user.bonus_points < bonus_price:
+    if request.user.bonus_points < bonus_price:  # Перевіряємо достатність балів
         messages.error(request, f'Недостатньо бонусних балів. Потрібно: {bonus_price}, у вас: {request.user.bonus_points}')
-        return redirect('Market:bonus_shop')
+        return redirect('Market:bonus_shop')  # Повертаємо до бонусного магазину
     
-    cart_item, created = Cart.objects.get_or_create(
+    cart_item, created = Cart.objects.get_or_create(  # Знаходимо або створюємо товар в кошику
         user=request.user,
         product=product,
-        is_bonus_purchase=True,
-        defaults={'quantity': 1}
+        is_bonus_purchase=True,  # Позначаємо як бонусну покупку
+        defaults={'quantity': 1}  # Початкова кількість для нового товару
     )
     
-    if not created:
+    if created:
+        messages.success(request, f'"{product.name}" додано в кошик! Ціна: {bonus_price} балів')
+    else:
         new_total_cost = bonus_price * (cart_item.quantity + 1)
         if request.user.bonus_points < new_total_cost:
-            messages.error(request, f'Недостатньо бонусних балів для збільшення кількості. Потрібно: {new_total_cost}, у вас: {request.user.bonus_points}')
+            messages.error(request, f'Недостатньо балів для збільшення кількості. Потрібно: {new_total_cost}')
             return redirect('Market:bonus_shop')
 
         cart_item.quantity += 1
         cart_item.save()
-        messages.success(request, f'Кількість "{product.name}" збільшено в кошику! Ціна: {bonus_price} балів за шт.')
-    else:
-        messages.success(request, f'"{product.name}" додано в кошик для бонусної покупки! Ціна: {bonus_price} балів')
+        messages.success(request, f'Кількість "{product.name}" збільшено! Ціна: {bonus_price} балів за шт.')
     
     return redirect('Market:bonus_shop')
 
 @login_required
 def remove_bonus_from_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+    product = get_object_or_404(Product, id=product_id)  # Отримуємо товар або помилку 404
     
     try:
-        cart_item = Cart.objects.get(user=request.user, product=product, is_bonus_purchase=True)
+        cart_item = Cart.objects.get(  # Знаходимо товар в кошику
+            user=request.user,  # Для поточного користувача
+            product=product,  # Конкретний товар
+            is_bonus_purchase=True  # Тільки бонусні товари
+        )
+
         if cart_item.quantity > 1:
             cart_item.quantity -= 1
             cart_item.save()
-            messages.success(request, f'Кількість "{product.name}" зменшено в кошику!')
+            messages.success(request, f'Кількість "{product.name}" зменшено в кошику!')  # Повідомляємо про успіх
         else:
             cart_item.delete()
             messages.success(request, f'"{product.name}" видалено з кошика!')
@@ -336,7 +341,5 @@ def remove_bonus_from_cart(request, product_id):
     
     return redirect('Market:view_cart')
 
-@login_required
-def buy_with_bonus(request, product_id):
-    return add_bonus_to_cart(request, product_id)
+
 

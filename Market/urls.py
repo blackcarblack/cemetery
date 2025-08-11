@@ -30,9 +30,8 @@ urlpatterns = [
     path('cart/add_one/<int:product_id>/', views.add_one_to_cart, name='add_one_to_cart'),
     path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     
-    # Bonus shop routes
+    # Бонусний магазин
     path('bonus-shop/', views.bonus_shop, name='bonus_shop'),
-    path('buy-with-bonus/<int:product_id>/', views.buy_with_bonus, name='buy_with_bonus'),
     path('add-bonus-to-cart/<int:product_id>/', views.add_bonus_to_cart, name='add_bonus_to_cart'),
     path('remove-bonus-from-cart/<int:product_id>/', views.remove_bonus_from_cart, name='remove_bonus_from_cart'),
     path('checkout/', views.checkout, name='checkout'),
