@@ -102,7 +102,6 @@ def view_cart(request):
 
     for item in cart_items:
         if item.is_bonus_purchase:
-            # Використовуємо ціну з BonusProduct або звичайну ціну
             try:
                 bonus_price = item.product.bonus_info.bonus_price
             except:
@@ -114,7 +113,6 @@ def view_cart(request):
             item.total_price = item.product.price * item.quantity
             item.is_bonus = False
 
-    # Розділяємо звичайні та бонусні товари
     regular_items = [item for item in cart_items if not item.is_bonus_purchase]
     bonus_items = [item for item in cart_items if item.is_bonus_purchase]
     
@@ -122,7 +120,7 @@ def view_cart(request):
     bonus_total = sum(item.total_price for item in bonus_items)
     
     from decimal import Decimal
-    bonus_points = regular_total * Decimal('0.01') if regular_total else 0  # 1% bonus points
+    bonus_points = regular_total * Decimal('0.25') if regular_total else 0
 
     return render(request, 'Market/cart.html', {
         'cart_items': cart_items,
@@ -130,7 +128,7 @@ def view_cart(request):
         'bonus_items': bonus_items,
         'regular_total': regular_total,
         'bonus_total': bonus_total,
-        'total_sum': regular_total,  # Для сумісності
+        'total_sum': regular_total,
         'bonus_points': bonus_points,
         'user_bonus_points': request.user.bonus_points
     })
