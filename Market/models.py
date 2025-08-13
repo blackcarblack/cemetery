@@ -74,14 +74,9 @@ class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
-    is_bonus_purchase = models.BooleanField(default=False)  # Прапор: чи є товар у кошику бонусною покупкою
+
     def __str__(self):
-        if self.is_bonus_purchase:  # Перевіряємо чи це бонусна покупка
-            purchase_type = " (бонусна покупка)"  # Додаємо відповідну позначку
-        else:
-            purchase_type = "(звичайна покупка)"  # Звичайна покупка
-        
-        return f"{self.user.username} - {self.product.name} ({self.quantity}){purchase_type}"  # Формуємо текстове представлення товару в кошику
+        return f"{self.user.username} - {self.product.name} ({self.quantity})"
 
 class Comment(Model):
     product = ForeignKey(Product, on_delete=CASCADE, related_name='comments')
@@ -89,33 +84,14 @@ class Comment(Model):
     text = TextField()
     created_at = DateTimeField(auto_now_add=True)
 
-class BonusProduct(models.Model):  # Модель для управління бонусними цінами товарів
-    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='bonus_info')  # Зв'язок 1:1 з товаром
-    bonus_price = models.DecimalField(max_digits=8, decimal_places=2, help_text='Ціна в бонусних балах')  # Ціна товару в бонусних балах
-    is_available = models.BooleanField(default=True, help_text='Доступний для покупки')  # Чи доступний товар для бонусної покупки
-
-    def __str__(self):
-        return f"{self.product.name} - {self.bonus_price} балів"  # Текстове представлення бонусного товару
-
-    class Meta:
-        verbose_name = "Бонусний товар"  # Назва в однині
-        verbose_name_plural = "Бонусні товари"  # Назва в множині
-        ordering = ['product__name']  # Сортування за назвою товару
 
 class Purchase(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
-    bonus_points_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Скільки бонусних балів нараховано за покупку
-    paid_with_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Скільки бонусних балів витрачено на покупку
-    is_bonus_purchase = models.BooleanField(default=False)  # Прапор: чи була покупка зроблена за бонуси
+    bonus_points_earned = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        if self.is_bonus_purchase:  # Перевіряємо чи це бонусна покупка
-            purchase_type = " (бонусна покупка)"  # Додаємо відповідну позначку
-        else:
-            purchase_type = "(звичайна покупка)"  # Звичайна покупка
-        
-        return f"{self.user.username} - {self.product.name} x{self.quantity}{purchase_type}"  # Формуємо текстове представлення покупки
+        return f"{self.user.username} - {self.product.name} x{self.quantity}"
