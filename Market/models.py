@@ -14,6 +14,7 @@ class CustomUser(AbstractUser):
     age = models.IntegerField(null=True, blank=True)
     country = models.CharField(max_length=100, blank=True)
     address = models.TextField(blank=True)
+    bonus_points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     bonus_points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Поле для зберігання бонусних балів користувача
 
     class Meta:

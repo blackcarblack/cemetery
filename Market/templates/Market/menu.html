@@ -5,21 +5,6 @@
 
 {% block content %}
 <section class="container mt-4">
-
-    <!-- Перемикач між звичайним та бонусним магазином -->
-    {% if user.is_authenticated %}
-    <div class="text-center mb-3">
-        <div class="btn-group" role="group">
-            <a href="{% url 'Market:menu' %}" class="btn btn-primary active">
-                🛒 Звичайний магазин
-            </a>
-            <a href="{% url 'Market:bonus_products' %}" class="btn btn-outline-warning">
-                🎁 Бонусний магазин ({{ user_bonus_points|floatformat:0 }} балів)
-            </a>
-        </div>
-    </div>
-    {% endif %}
-
     <nav class="nav sticky-top justify-content-center py-2 bg-white shadow-sm" style="z-index: 100;">
         {% for section in sections %}
             <a href="#{{ section }}" class="btn btn-outline-primary mx-1 text-capitalize">{{ section }}</a>

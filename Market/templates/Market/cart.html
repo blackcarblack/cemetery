@@ -128,7 +128,7 @@
 
         {{ item.quantity }}
 
-        <form method="post" action="{% url 'add_one_to_cart' item.product.id %}" style="display:inline;">
+        <form method="post" action="{% url 'add_to_cart' item.product.id %}" style="display:inline;">
           {% csrf_token %}
           <button type="submit">+</button>
         </form>
@@ -146,30 +146,28 @@
     {% endfor %}
   </tbody>
 </table>
-<div class="bonus-info" style="background-color: #fff3cd; padding: 15px; margin: 20px 0; border-radius: 5px; border: 1px solid #ffeaa7;">
-  <h4 style="color: #856404;">💰 Бонусна програма</h4>
-  <p>Ваші бонусні бали: <strong>{{ user_bonus_points|floatformat:2 }}</strong></p>
-  <p>За цю покупку ви отримаєте: <strong>{{ bonus_points_to_earn|floatformat:2 }}</strong> балів (10%)</p>
+<div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+  <p><strong>Ваші бали:</strong> {{ user_bonus_points|floatformat:2 }}</p>
 </div>
 
 <form method="post" action="{% url 'Market:checkout' %}">
   {% csrf_token %}
-  {% if user_bonus_points > 0 %}
-  <div style="margin: 20px 0; padding: 15px; background-color: #d1ecf1; border-radius: 5px;">
-    <label for="use_bonus" style="font-weight: bold;">
-      <input type="checkbox" id="use_bonus" name="use_bonus">
-      Використати бонусні бали (у вас {{ user_bonus_points|floatformat:2 }} балів)
-    </label>
-  </div>
-  {% endif %}
 
   <div class="menu-sum-row">
     <a class="menu-link" href="{% url 'Market:menu' %}">Продовжити покупки</a>
     <div style="display: flex; align-items: center; gap: 20px;">
       <div class="total-sum">Загальна сума: {{ total|floatformat:2 }} грн</div>
-      <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
-        Оформити замовлення
-      </button>
+      <div style="display: flex; gap: 10px;">
+        <button type="submit" name="payment_mode" value="money"
+                style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
+          Оплатити грошима
+        </button>
+        <button type="submit" name="payment_mode" value="bonus"
+                style="background-color: #ffc107; color: black; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;"
+                {% if user_bonus_points < total %}disabled{% endif %}>
+          Оплатити балами
+        </button>
+      </div>
     </div>
   </div>
 </form>
