@@ -13,7 +13,6 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from .forms import UserRegistrationForm, LoginForm
-from .doom_captcha import DoomCaptcha
 
 
 def user_login(request):
