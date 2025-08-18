@@ -6,21 +6,14 @@ from django.core.cache import cache
 from django.conf import settings
 
 class DoomCaptcha:
-    """
-    Authentic DOOM 1993 CAPTCHA
-    
-    Based on the real implementation by Guillermo Rauch:
-    https://github.com/rauchg/doom-captcha
-    
-    Simulates a real DOOM game where you need to kill 3 monsters
-    """
+   
     def __init__(self):
         self.width = 480
         self.height = 320
         self.monsters_to_kill = 3
         self.cache_timeout = 300  # 5 minutes
         
-        # Authentic DOOM 1993 VGA color palette (256 colors)
+       
         self.doom_palette = [
             # Classic DOOM red spectrum (blood, demons, fire)
             (0, 0, 0),        # Pure black (void)

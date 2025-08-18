@@ -1,0 +1,407 @@
+{% extends 'Market/base.html' %}
+{% load static %}
+
+{% block title %}Адмін панель - Ресторан "Смакота"{% endblock %}
+
+{% block extra_css %}
+<style>
+    .admin-header {
+        background: linear-gradient(135deg, #343a40 0%, #ffc107 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        height: 100%;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+        line-height: 1;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+    
+    .admin-section {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .section-title {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        border-bottom: 3px solid #ffc107;
+        padding-bottom: 0.5rem;
+    }
+    
+    .product-table {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.1);
+    }
+    
+    .product-table th {
+        background: #343a40;
+        color: white;
+        border: none;
+        font-weight: 600;
+        padding: 1rem;
+    }
+    
+    .product-table td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-color: #e9ecef;
+    }
+    
+    .product-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .btn-admin {
+        background: linear-gradient(45deg, #343a40, #ffc107);
+        border: none;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .btn-admin:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .product-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+    
+    .welcome-admin {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 0.5rem;
+    }
+    
+    .admin-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <div class="container">
+        <div class="text-center">
+            <h1 class="welcome-admin">
+                <i class="fas fa-tachometer-alt"></i> 
+                Адмін панель
+            </h1>
+            <p class="admin-subtitle">Вітаємо, {{ user.username }}! Керуйте рестораном "Смакота"</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Статистика -->
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="stat-card">
+                <i class="fas fa-utensils stat-icon text-primary"></i>
+                <h3 class="stat-number text-primary">{{ total_products }}</h3>
+                <p class="stat-label">Всього страв</p>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="stat-card">
+                <i class="fas fa-shopping-cart stat-icon text-warning"></i>
+                <h3 class="stat-number text-warning">{{ total_purchases }}</h3>
+                <p class="stat-label">Всього замовлень</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Управління стравами -->
+    <div class="admin-section">
+        <h2 class="section-title">
+            <i class="fas fa-utensils"></i> Управління стравами
+        </h2>
+        
+        <div class="mb-3">
+            <a href="{% url 'Market:add_product' %}" class="btn-admin">
+                <i class="fas fa-plus"></i> Додати нову страву
+            </a>
+        </div>
+        
+        {% if products %}
+            <div class="table-responsive">
+                <table class="table product-table">
+                    <thead>
+                        <tr>
+                            <th>Фото</th>
+                            <th>Назва</th>
+                            <th>Ціна</th>
+                            <th>Розділ</th>
+                            <th>Дії</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                            <tr>
+                                <td>
+                                    {% if product.image %}
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="product-image">
+                                    {% else %}
+                                        <div class="product-image bg-light d-flex align-items-center justify-content-center">
+                                            <i class="fas fa-image text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <strong>{{ product.name }}</strong><br>
+                                    <small class="text-muted">{{ product.description|truncatechars:50 }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-success fs-6">₴{{ product.price }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ product.section }}</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                onclick="openEditModal({{ product.id }}, '{{ product.name|escapejs }}', '{{ product.price }}', '{{ product.description|escapejs }}', '{{ product.section }}')">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" 
+                                                onclick="openDeleteModal({{ product.id }}, '{{ product.name|escapejs }}')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-utensils text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">Поки немає страв</h4>
+                <p class="text-muted">Додайте першу страву до меню</p>
+                <a href="{% url 'Market:add_product' %}" class="btn-admin">
+                    <i class="fas fa-plus"></i> Додати страву
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Модальное окно для редактирования продукта -->
+<div class="modal fade" id="editProductModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-edit text-warning"></i> Редагувати продукт
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="editProductForm">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" id="edit_product_id" name="product_id">
+                    
+                    <div class="mb-3">
+                        <label for="edit_name" class="form-label">Назва</label>
+                        <input type="text" class="form-control" id="edit_name" name="name" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_price" class="form-label">Ціна</label>
+                        <input type="number" class="form-control" id="edit_price" name="price" step="0.01" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_description" class="form-label">Опис</label>
+                        <textarea class="form-control" id="edit_description" name="description" rows="3" required></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_section" class="form-label">Розділ</label>
+                        <select class="form-control" id="edit_section" name="section" required>
+                            <option value="Піца">Піца</option>
+                            <option value="Суші">Суші</option>
+                            <option value="Салати">Салати</option>
+                            <option value="Напої">Напої</option>
+                            <option value="Десерти">Десерти</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="edit_image" class="form-label">Нове зображення (необов'язково)</label>
+                        <input type="file" class="form-control" id="edit_image" name="image" accept="image/*">
+                        <small class="text-muted">Залиште порожнім, щоб зберегти поточне зображення</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save"></i> Зберегти зміни
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для подтверждения удаления -->
+<div class="modal fade" id="deleteProductModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-danger"></i> Підтвердження видалення
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Ви впевнені, що хочете видалити продукт <strong id="delete_product_name"></strong>?</p>
+                <p class="text-muted">Цю дію неможливо буде скасувати.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    <i class="fas fa-trash"></i> Видалити
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let deleteProductId = null;
+
+function openEditModal(id, name, price, description, section) {
+    document.getElementById('edit_product_id').value = id;
+    document.getElementById('edit_name').value = name;
+    document.getElementById('edit_price').value = price;
+    document.getElementById('edit_description').value = description;
+    document.getElementById('edit_section').value = section;
+    
+    // Открываем модальное окно
+    const modal = new bootstrap.Modal(document.getElementById('editProductModal'));
+    modal.show();
+}
+
+function openDeleteModal(id, name) {
+    deleteProductId = id;
+    document.getElementById('delete_product_name').textContent = name;
+    
+    // Открываем модальное окно
+    const modal = new bootstrap.Modal(document.getElementById('deleteProductModal'));
+    modal.show();
+}
+
+function confirmDelete() {
+    if (!deleteProductId) return;
+    
+    fetch(`/market/delete/${deleteProductId}/`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Закрываем модальное окно
+            const modal = bootstrap.Modal.getInstance(document.getElementById('deleteProductModal'));
+            modal.hide();
+            
+            // Перезагружаем страницу для отображения изменений
+            location.reload();
+        } else {
+            alert('Помилка: ' + (data.error || 'Невідома помилка'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Помилка при видаленні продукту');
+    });
+}
+
+// AJAX отправка формы редактирования
+document.getElementById('editProductForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const productId = document.getElementById('edit_product_id').value;
+    
+    fetch(`/market/edit/${productId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Закрываем модальное окно
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
+            modal.hide();
+            
+            // Перезагружаем страницу для отображения изменений
+            location.reload();
+        } else {
+            alert('Помилка: ' + (data.error || 'Невідома помилка'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Помилка при збереженні змін');
+    });
+});
+</script>
+{% endblock %}

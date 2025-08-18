@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 
 from .forms import ProductForm, CommentForm
 from .models import Product, Cart, Purchase
@@ -37,7 +38,11 @@ def shop(request):
 
 
 
+@login_required
 def add_product(request):
+    if not request.user.is_authenticated:
+        return redirect('Market:login')
+    
     if request.method == 'POST':
         name = request.POST.get('name')
         price = request.POST.get('price')
@@ -54,27 +59,80 @@ def add_product(request):
         )
         product.save()
 
+        # Проверяем, откуда пришел пользователь
+        referer = request.META.get('HTTP_REFERER', '')
+        if 'admin' in referer:
+            return redirect('Market:admin_dashboard')
         return redirect('Market:menu')
     return render(request, 'Market/product.html')
 
+@login_required
 def delete_product(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('Market:login')
+    
     product = get_object_or_404(Product, pk=pk)
+    
     if request.method == 'POST':
+        # Проверяем, является ли это AJAX запросом
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            try:
+                product.delete()
+                return JsonResponse({'success': True})
+            except Exception as e:
+                return JsonResponse({
+                    'success': False, 
+                    'error': str(e)
+                })
+        
+        # Обычная обработка для не-AJAX запросов
         product.delete()
+        # Проверяем, откуда пришел пользователь
+        referer = request.META.get('HTTP_REFERER', '')
+        if 'admin' in referer:
+            return redirect('Market:admin_dashboard')
         return redirect('Market:menu')
+        
     return render(request, 'Market/confirm_delete.html', {'product': product})
 
 
+@login_required
 def edit_product(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('Market:login')
+    
     product = Product.objects.get(id=pk)
 
     if request.method == "GET":
         form = ProductForm(instance=product)
         return render(request, "Market/edit.html", {'form': form})
 
+    # Проверяем, является ли это AJAX запросом
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        try:
+            form = ProductForm(request.POST, request.FILES, instance=product)
+            if form.is_valid():
+                form.save()
+                return JsonResponse({'success': True})
+            else:
+                return JsonResponse({
+                    'success': False, 
+                    'error': 'Помилка валідації форми'
+                })
+        except Exception as e:
+            return JsonResponse({
+                'success': False, 
+                'error': str(e)
+            })
+    
+    # Обычная обработка для не-AJAX запросов
     form = ProductForm(request.POST, request.FILES, instance=product)
     if form.is_valid():
         form.save()
+        # Проверяем, откуда пришел пользователь
+        referer = request.META.get('HTTP_REFERER', '')
+        if 'admin' in referer:
+            return redirect('Market:admin_dashboard')
         return redirect('Market:menu')
 
     return render(request, "Market/edit.html", {'form': form})
@@ -190,3 +248,23 @@ def checkout(request):
     
     cart_items.delete()
     return redirect('index')
+
+
+@login_required
+def admin_dashboard(request):
+    """Кастомная админ-панель с ограниченным доступом"""
+    if not request.user.is_authenticated:
+        messages.error(request, 'Доступ заборонено! Необхідно увійти в систему.')
+        return redirect('Market:login')
+    
+    # Базовая статистика для админ-панели
+    total_products = Product.objects.count()
+    total_purchases = Purchase.objects.count()
+    
+    context = {
+        'total_products': total_products,
+        'total_purchases': total_purchases,
+        'products': Product.objects.all()
+    }
+    
+    return render(request, 'Market/admin_dashboard.html', context)
