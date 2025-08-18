@@ -42,20 +42,23 @@
                                     </div>
                                 </div>
                             </div>
+                            {% if request.user.is_superuser %}
                             <div class="card-footer bg-light border-top-0 d-flex justify-content-end gap-2">
                                 <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-outline-primary">Редагувати</a>
                                 <a href="{% url 'delete_product' product.pk %}" class="btn btn-sm btn-outline-danger">Видалити</a>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}
             {% endfor %}
         </div>
     {% endfor %}
-
+    {% if request.user.is_superuser %}
     <div class="text-center mt-5 mb-5">
         <a href="{% url 'add_product' %}" class="btn btn-success btn-lg px-5 shadow">Додати новий продукт</a>
     </div>
+    {% endif %}
 </section>
 
 <style>
