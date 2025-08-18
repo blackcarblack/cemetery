@@ -37,7 +37,11 @@ def shop(request):
 
 
 
+@login_required
 def add_product(request):
+    if not request.user.is_authenticated:
+        return redirect('Market:login')
+    
     if request.method == 'POST':
         name = request.POST.get('name')
         price = request.POST.get('price')
@@ -57,7 +61,11 @@ def add_product(request):
         return redirect('Market:menu')
     return render(request, 'Market/product.html')
 
+@login_required
 def delete_product(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('Market:login')
+    
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
         product.delete()
@@ -65,7 +73,11 @@ def delete_product(request, pk):
     return render(request, 'Market/confirm_delete.html', {'product': product})
 
 
+@login_required
 def edit_product(request, pk):
+    if not request.user.is_authenticated:
+        return redirect('Market:login')
+    
     product = Product.objects.get(id=pk)
 
     if request.method == "GET":
@@ -190,3 +202,25 @@ def checkout(request):
     
     cart_items.delete()
     return redirect('index')
+
+
+@login_required
+def admin_dashboard(request):
+    """Кастомная админ-панель с ограниченным доступом"""
+    if not request.user.is_authenticated:
+        messages.error(request, 'Доступ заборонено! Необхідно увійти в систему.')
+        return redirect('Market:login')
+    
+    # Базовая статистика для админ-панели
+    total_products = Product.objects.count()
+    total_users = Purchase.objects.values('user').distinct().count()
+    total_purchases = Purchase.objects.count()
+    
+    context = {
+        'total_products': total_products,
+        'total_users': total_users,
+        'total_purchases': total_purchases,
+        'products': Product.objects.all()
+    }
+    
+    return render(request, 'Market/admin_dashboard.html', context)

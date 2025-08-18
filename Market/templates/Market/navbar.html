@@ -75,11 +75,16 @@
                             <li><a class="dropdown-item" href="{% url 'Market:profile' %}">
                                 <i class="fas fa-user-circle"></i> Профіль
                             </a></li>
-                            {% if user.is_staff %}
+                            {% if user.is_authenticated %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/admin/">
-                                    <i class="fas fa-tachometer-alt"></i> Адмін панель
+                                <li><a class="dropdown-item" href="{% url 'Market:admin_dashboard' %}">
+                                    <i class="fas fa-cogs"></i> Панель управління
                                 </a></li>
+                                {% if user.is_staff %}
+                                    <li><a class="dropdown-item" href="/admin/">
+                                        <i class="fas fa-tachometer-alt"></i> Django Admin
+                                    </a></li>
+                                {% endif %}
                             {% endif %}
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'Market:logout' %}">

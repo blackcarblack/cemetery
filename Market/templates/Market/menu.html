@@ -42,10 +42,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-footer bg-light border-top-0 d-flex justify-content-end gap-2">
-                                <a href="{% url 'edit_product' product.id %}" class="btn btn-sm btn-outline-primary">Редагувати</a>
-                                <a href="{% url 'delete_product' product.pk %}" class="btn btn-sm btn-outline-danger">Видалити</a>
-                            </div>
+                            {% if user.is_authenticated %}
+                                <div class="card-footer bg-light border-top-0 d-flex justify-content-end gap-2">
+                                    <a href="{% url 'Market:edit_product' product.id %}" class="btn btn-sm btn-outline-primary">Редагувати</a>
+                                    <a href="{% url 'Market:delete_product' product.pk %}" class="btn btn-sm btn-outline-danger">Видалити</a>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}
@@ -53,9 +55,11 @@
         </div>
     {% endfor %}
 
-    <div class="text-center mt-5 mb-5">
-        <a href="{% url 'add_product' %}" class="btn btn-success btn-lg px-5 shadow">Додати новий продукт</a>
-    </div>
+    {% if user.is_authenticated %}
+        <div class="text-center mt-5 mb-5">
+            <a href="{% url 'Market:add_product' %}" class="btn btn-success btn-lg px-5 shadow">Додати новий продукт</a>
+        </div>
+    {% endif %}
 </section>
 
 <style>
