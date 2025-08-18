@@ -30,6 +30,7 @@ urlpatterns = [
     path('my-cart/', views.view_cart, name='user_cart'),
     path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
+    path('menu/', views.shop, name='menu'),
 
     path('captcha/', include('captcha.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
