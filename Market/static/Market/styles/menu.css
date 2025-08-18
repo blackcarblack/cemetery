@@ -1,0 +1,105 @@
+body {
+    background: linear-gradient(120deg, #e0f7fa, #f1f8ff);
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.nav a {
+    transition: all 0.3s ease;
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-weight: 500;
+    background: #ffffff;
+    border: 1px solid #0d6efd;
+}
+
+.nav a:hover {
+    background: #0d6efd;
+    color: #fff !important;
+    transform: translateY(-2px) scale(1.05);
+}
+
+
+h2 {
+    font-weight: 700;
+    color: #0d6efd;
+    letter-spacing: 1px;
+    margin-top: 40px;
+}
+
+
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 18px;
+    background: #ffffff;
+    overflow: hidden;
+    border: 1px solid #e3f2fd;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.1);
+}
+
+
+.card-img-top-container {
+    height: 200px;
+    background: #f9fbff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.product-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.1);
+}
+
+
+h4.text-success {
+    font-weight: bold;
+    color: #28a745 !important;
+}
+
+
+.btn-success {
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+
+.card-footer a {
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    padding: 4px 10px;
+}
+
+.card-footer a:hover {
+    transform: scale(1.1);
+}
+
+.btn-lg {
+    border-radius: 30px;
+    padding: 12px 40px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.btn-lg:hover {
+    transform: translateY(-3px);
+    background: #157347;
+}

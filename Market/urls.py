@@ -25,7 +25,6 @@ urlpatterns = [
     path('add/', views.add_product, name='add_product'),
     path('edit/<int:pk>/', views.edit_product, name='edit_product'),
     path('admin/', admin.site.urls),
-    path('custom-admin/', views.admin_dashboard, name='admin_dashboard'),
     path('my-cart/', views.view_cart, name='user_cart'),
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
 
