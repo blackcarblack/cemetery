@@ -77,7 +77,7 @@ class Cart(models.Model):
     quantity = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return f"{self.user.username} - {self.product.name} ({self.quantity})"
+        return self.product.name
 
 class Comment(Model):
     product = ForeignKey(Product, on_delete=CASCADE, related_name='comments')
@@ -95,4 +95,4 @@ class Purchase(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.product.name} x{self.quantity}"
+        return self.product.name

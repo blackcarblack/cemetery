@@ -121,14 +121,14 @@
       <td>{{ item.product.name }}</td>
       <td>{{ item.product.price }}</td>
       <td>
-        <form method="post" action="{% url 'remove_from_cart' item.product.id %}" style="display:inline;">
+        <form method="post" action="{% url 'Market:remove_from_cart' item.product.id %}" style="display:inline;">
           {% csrf_token %}
           <button type="submit">-</button>
         </form>
 
         {{ item.quantity }}
 
-        <form method="post" action="{% url 'add_to_cart' item.product.id %}" style="display:inline;">
+        <form method="post" action="{% url 'Market:add_to_cart' item.product.id %}" style="display:inline;">
           {% csrf_token %}
           <button type="submit">+</button>
         </form>

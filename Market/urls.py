@@ -9,7 +9,6 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('team/', views.team, name='team'),
     path('menu/', views.shop, name='menu'),
-    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/', views.view_cart, name='view_cart'),
     path('product/<int:product_id>/', views.product_detail, name='product_detail'),
     path('captcha/', include('captcha.urls')),
@@ -27,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('custom-admin/', views.admin_dashboard, name='admin_dashboard'),
     path('my-cart/', views.view_cart, name='user_cart'),
+    path('add-to-cart/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('cart/remove/<int:product_id>/', views.remove_from_cart, name='remove_from_cart'),
 
 

@@ -63,6 +63,359 @@ body::before {
 
 /* ВСІ НАВІГАЦІЙНІ СТИЛІ ВИДАЛЕНІ - використовуються ТІЛЬКИ стилі з base.html */
 
+/* ENHANCED HERO SECTION STYLING */
+.hero-section {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%);
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
+    margin: 20px 0;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 30% 30%, rgba(102, 126, 234, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(79, 172, 254, 0.12) 0%, transparent 60%);
+    pointer-events: none;
+    border-radius: 25px;
+}
+
+.restaurant-intro {
+    padding: 50px 40px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 30px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+    border: 1px solid rgba(255,255,255,0.4);
+    position: relative;
+    overflow: hidden;
+    max-width: 700px;
+    text-align: center;
+}
+
+.restaurant-intro::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 1s ease;
+}
+
+.restaurant-intro:hover::before {
+    left: 100%;
+}
+
+.restaurant-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+    text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+    position: relative;
+    z-index: 2;
+}
+
+.restaurant-subtitle {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+    position: relative;
+    z-index: 2;
+}
+
+.menu-button-container {
+    position: relative;
+    z-index: 2;
+}
+
+.menu-button {
+    font-weight: 700;
+    padding: 18px 40px;
+    border-radius: 35px;
+    background: var(--warning-gradient);
+    border: none;
+    color: white;
+    transition: all var(--transition-bounce);
+    position: relative;
+    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-size: 1.1rem;
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4);
+    z-index: 2;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.menu-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    transition: all var(--transition-bounce);
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+.menu-button:hover::before {
+    width: 350px;
+    height: 350px;
+}
+
+.menu-button:hover {
+    transform: translateY(-8px) scale(1.08);
+    box-shadow: 0 20px 50px rgba(255, 193, 7, 0.5);
+    background: var(--danger-gradient);
+    color: white;
+    text-decoration: none;
+}
+
+.menu-button:active {
+    transform: translateY(-4px) scale(1.02);
+}
+
+.bonus-section {
+    position: relative;
+    z-index: 1;
+}
+
+.bonus-points-display {
+    background: var(--warning-gradient);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 25px rgba(255, 193, 7, 0.3);
+    transition: all var(--transition-smooth);
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.bonus-points-display:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 12px 35px rgba(255, 193, 7, 0.4);
+}
+
+/* CONTACT SECTION STYLING */
+.contact-section {
+    background: transparent;
+    position: relative;
+    margin-top: 80px;
+    z-index: 1;
+    padding: 100px 0 80px 0;
+}
+
+.contact-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    padding: 35px 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    text-align: center;
+    margin: 0 auto 30px auto;
+    max-width: 320px;
+    height: 120px;
+    width: 100%;
+}
+
+.contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.8s ease;
+}
+
+.contact-card:hover::before {
+    left: 100%;
+}
+
+.contact-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.contact-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-smooth);
+}
+
+.phone-card .contact-icon {
+    background: var(--warning-gradient);
+}
+
+.hours-card .contact-icon {
+    background: var(--success-gradient);
+}
+
+.contact-icon::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transition: all var(--transition-bounce);
+    transform: translate(-50%, -50%);
+}
+
+.contact-card:hover .contact-icon::before {
+    width: 100%;
+    height: 100%;
+}
+
+.contact-card:hover .contact-icon {
+    transform: scale(1.1) rotate(10deg);
+}
+
+.contact-content {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+}
+
+.contact-title {
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 8px;
+    font-size: 1.3rem;
+    letter-spacing: 0.5px;
+}
+
+.contact-info {
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.phone-card:hover {
+    background: rgba(255, 248, 220, 0.95);
+}
+
+.hours-card:hover {
+    background: rgba(240, 255, 248, 0.95);
+}
+
+/* Mobile responsiveness for contact cards */
+@media (max-width: 768px) {
+    .contact-section {
+        margin-top: 40px;
+        padding: 60px 0;
+    }
+    
+    .contact-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 35px 25px;
+        margin: 0 auto 25px auto;
+        max-width: 300px;
+        height: auto;
+        min-height: 150px;
+    }
+    
+    .contact-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+        margin-bottom: 0;
+    }
+    
+    .contact-content {
+        text-align: center;
+        margin-top: 15px;
+    }
+    
+    .contact-title {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+    }
+    
+    .contact-info {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .contact-section {
+        padding: 30px 0;
+    }
+    
+    .contact-card {
+        margin: 0 auto 15px auto;
+        max-width: 280px;
+        padding: 25px 20px;
+    }
+}
+
+.bonus-button-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all var(--transition-smooth);
+}
+
+.bonus-button-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    border-color: rgba(255,255,255,0.3);
+}
+
 /* ОСНОВНИЙ КОНТЕНТ */
 main {
     max-width: 1400px;  /* Increased from 1200px */
