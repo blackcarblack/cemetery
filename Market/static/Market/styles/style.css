@@ -55,27 +55,32 @@ body::before {
     right: 0;
     bottom: 0;
     background: 
-        radial-gradient(circle at 20% 80%, rgba(66, 153, 225, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(129, 140, 248, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 20% 80%, rgba(66, 153, 225, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(129, 140, 248, 0.03) 0%, transparent 50%);
     pointer-events: none;
     z-index: -1;
 }
+
+
 
 /* ВСІ НАВІГАЦІЙНІ СТИЛІ ВИДАЛЕНІ - використовуються ТІЛЬКИ стилі з base.html */
 
 /* ENHANCED HERO SECTION STYLING */
 .hero-section {
-    min-height: 85vh;
+    min-height: 45vh;
     display: flex;
     align-items: center;
     position: relative;
     background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.08) 100%);
     backdrop-filter: blur(15px);
     border-radius: 25px;
-    margin: 20px 0;
+    margin: -40px 0 5px 0;
     box-shadow: 0 10px 50px rgba(0,0,0,0.12);
     border: 1px solid rgba(255,255,255,0.2);
+    overflow: hidden;
 }
+
+
 
 .hero-section::before {
     content: '';
@@ -92,7 +97,7 @@ body::before {
 }
 
 .restaurant-intro {
-    padding: 50px 40px;
+    padding: 30px 30px;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(20px);
     border-radius: 30px;
@@ -102,7 +107,10 @@ body::before {
     overflow: hidden;
     max-width: 700px;
     text-align: center;
+    z-index: 1;
 }
+
+
 
 .restaurant-intro::before {
     content: '';
@@ -147,26 +155,27 @@ body::before {
     z-index: 2;
 }
 
-.menu-button {
+.menu-button, .btn-warning.menu-button {
     font-weight: 700;
     padding: 18px 40px;
     border-radius: 35px;
-    background: var(--warning-gradient);
-    border: none;
-    color: white;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FF8C00 50%, #FF6B35 75%, #FF4757 100%) !important;
+    border: none !important;
+    color: white !important;
     transition: all var(--transition-bounce);
     position: relative;
     overflow: hidden;
     text-transform: uppercase;
     letter-spacing: 1.2px;
     font-size: 1.1rem;
-    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4);
+    box-shadow: 0 10px 30px rgba(255, 193, 7, 0.4), 0 0 20px rgba(255, 165, 0, 0.3);
     z-index: 2;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .menu-button::before {
@@ -188,11 +197,11 @@ body::before {
     height: 350px;
 }
 
-.menu-button:hover {
+.menu-button:hover, .btn-warning.menu-button:hover {
     transform: translateY(-8px) scale(1.08);
-    box-shadow: 0 20px 50px rgba(255, 193, 7, 0.5);
-    background: var(--danger-gradient);
-    color: white;
+    box-shadow: 0 20px 50px rgba(255, 193, 7, 0.6), 0 0 30px rgba(255, 165, 0, 0.5);
+    background: linear-gradient(135deg, #FF6B35 0%, #FF4757 25%, #E74C3C 50%, #C0392B 75%, #A93226 100%) !important;
+    color: white !important;
     text-decoration: none;
 }
 
@@ -226,16 +235,16 @@ body::before {
 .contact-section {
     background: transparent;
     position: relative;
-    margin-top: 80px;
+    margin-top: 10px;
     z-index: 1;
-    padding: 100px 0 80px 0;
+    padding: 20px 0 20px 0;
 }
 
 .contact-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
-    border-radius: 25px;
-    padding: 35px 30px;
+    border-radius: 20px;
+    padding: 20px 25px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.08);
     border: 1px solid rgba(255,255,255,0.3);
     transition: all var(--transition-smooth);
@@ -244,13 +253,15 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 25px;
+    gap: 20px;
     text-align: center;
-    margin: 0 auto 30px auto;
-    max-width: 320px;
-    height: 120px;
+    margin: 0 auto 10px auto;
+    max-width: 300px;
+    height: 90px;
     width: 100%;
 }
+
+
 
 .contact-card::before {
     content: '';
@@ -274,13 +285,13 @@ body::before {
 }
 
 .contact-icon {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     color: white;
     flex-shrink: 0;
     position: relative;
