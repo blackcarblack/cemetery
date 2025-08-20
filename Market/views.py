@@ -40,9 +40,6 @@ def shop(request):
 
 @login_required
 def add_product(request):
-    if not request.user.is_authenticated:
-        return redirect('Market:login')
-    
     if request.method == 'POST':
         name = request.POST.get('name')
         price = request.POST.get('price')
@@ -67,11 +64,8 @@ def add_product(request):
 
 @login_required
 def delete_product(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('Market:login')
-    
     product = get_object_or_404(Product, pk=pk)
-    
+
     if request.method == 'POST':
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             try:
@@ -94,9 +88,6 @@ def delete_product(request, pk):
 
 @login_required
 def edit_product(request, pk):
-    if not request.user.is_authenticated:
-        return redirect('Market:login')
-    
     product = Product.objects.get(id=pk)
 
     if request.method == "GET":
