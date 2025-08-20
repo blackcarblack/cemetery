@@ -219,15 +219,6 @@ def checkout(request):
         request.user.bonus_points += bonus_earned
         request.user.save()
 
-    for item in cart_items:
-        Purchase.objects.create(
-            user=request.user,
-            product=item.product,
-            quantity=item.quantity,
-            total_price=item.product.price * item.quantity,
-        )
-    
-    cart_items.delete()
     return redirect('index')
 
 
