@@ -252,12 +252,6 @@ def checkout(request):
 
 @login_required
 def admin_dashboard(request):
-    """Кастомная админ-панель с ограниченным доступом"""
-    if not request.user.is_authenticated:
-        messages.error(request, 'Доступ заборонено! Необхідно увійти в систему.')
-        return redirect('Market:login')
-    
-    # Базовая статистика для админ-панели
     total_products = Product.objects.count()
     total_purchases = Purchase.objects.count()
     
