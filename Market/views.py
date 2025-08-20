@@ -48,18 +48,17 @@ def add_product(request):
         price = request.POST.get('price')
         description = request.POST.get('description')
         image = request.FILES.get('image')
-        section = request.POST.get('section')  # <-- додано
+        section = request.POST.get('section')
 
         product = Product(
             name=name,
             price=price,
             description=description,
             image=image,
-            section=section  # <-- додано
+            section=section
         )
         product.save()
 
-        # Проверяем, откуда пришел пользователь
         referer = request.META.get('HTTP_REFERER', '')
         if 'admin' in referer:
             return redirect('Market:admin_dashboard')
@@ -74,7 +73,6 @@ def delete_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     
     if request.method == 'POST':
-        # Проверяем, является ли это AJAX запросом
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             try:
                 product.delete()
@@ -85,9 +83,7 @@ def delete_product(request, pk):
                     'error': str(e)
                 })
         
-        # Обычная обработка для не-AJAX запросов
         product.delete()
-        # Проверяем, откуда пришел пользователь
         referer = request.META.get('HTTP_REFERER', '')
         if 'admin' in referer:
             return redirect('Market:admin_dashboard')
@@ -107,7 +103,6 @@ def edit_product(request, pk):
         form = ProductForm(instance=product)
         return render(request, "Market/edit.html", {'form': form})
 
-    # Проверяем, является ли это AJAX запросом
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         try:
             form = ProductForm(request.POST, request.FILES, instance=product)
@@ -125,11 +120,9 @@ def edit_product(request, pk):
                 'error': str(e)
             })
     
-    # Обычная обработка для не-AJAX запросов
     form = ProductForm(request.POST, request.FILES, instance=product)
     if form.is_valid():
         form.save()
-        # Проверяем, откуда пришел пользователь
         referer = request.META.get('HTTP_REFERER', '')
         if 'admin' in referer:
             return redirect('Market:admin_dashboard')
